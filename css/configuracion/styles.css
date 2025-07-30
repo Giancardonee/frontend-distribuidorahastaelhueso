@@ -1,0 +1,151 @@
+/* ... (Tu CSS existente para .card.custom-card y .info-field) ... */
+
+/* Estilo de los campos de información */
+.info-field {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 0.5rem;
+    position: relative;
+    flex-wrap: wrap;
+}
+.info-field:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+.info-field label {
+    flex-basis: 150px;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0;
+    margin-right: 1rem;
+}
+.info-field input[type="text"],
+.info-field input[type="email"],
+.info-field p {
+    flex-grow: 1;
+    border: none;
+    background: transparent;
+    font-size: 1.05rem;
+    color: #343a40;
+    padding: 0.25rem 0.5rem;
+    margin-bottom: 0;
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    border-radius: 0.25rem;
+}
+.info-field input[readonly] {
+    cursor: default;
+}
+
+/* ESTILO CLAVE: Cuando el campo está en modo edición (la clase 'editing' en .info-field) */
+.info-field.editing input:not([readonly]) {
+    background-color: #f0f8ff; /* Un fondo azul claro para indicar edición */
+    border: 1px solid #0d6efd; /* Borde azul de Bootstrap */
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25); /* Sombra suave */
+    padding: 0.25rem 0.5rem;
+}
+
+.info-field input:focus:not([readonly]) {
+    outline: none;
+    background-color: #93afb8;
+    border-radius: 0.25rem;
+}
+
+
+/* Botón de edición original (lápiz) */
+.info-field .edit-btn {
+    background: none;
+    border: none;
+    color: #0d6efd;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0 0.5rem;
+    transition: color 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Asegurarse de que el icono dentro sea visible si aún se usa el <i> */
+    /* .info-field .edit-btn i { display: inline-block; font-size: 1.1rem; } */
+}
+.info-field .edit-btn:hover {
+    color: #0a58ca;
+}
+
+/* Estilos para los nuevos botones de Guardar y Cancelar */
+.info-field .save-btn,
+.info-field .cancel-btn {
+    /* Clases de Bootstrap: btn btn-primary/secondary btn-sm */
+    font-size: 0.9rem; /* Un poco más pequeños que los iconos grandes */
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.3rem; /* Bordes redondeados */
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    margin-left: 0.5rem; /* Espacio entre el input y los botones, y entre ellos */
+    white-space: nowrap; /* Evita que el texto se rompa en varias líneas */
+}
+
+/* Alineación para responsividad en dispositivos móviles */
+@media (max-width: 768px) {
+    .info-field {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .info-field label {
+        flex-basis: auto;
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+        text-align: left;
+    }
+    .info-field input,
+    .info-field p {
+        width: 100%;
+        margin-right: 0;
+    }
+    .info-field .edit-btn { /* Para el botón original de lápiz */
+        position: absolute;
+        top: 0.5rem; /* Ajusta la posición superior */
+        right: 0.5rem; /* Ajusta la posición derecha */
+        margin-left: 0;
+        padding: 0.5rem; /* Área de toque más grande */
+    }
+    .info-field .save-btn,
+    .info-field .cancel-btn { /* Para los nuevos botones */
+        margin-top: 0.75rem; /* Espacio entre el input y los botones apilados */
+        margin-left: 0; /* Quitar margen izquierdo */
+        width: 100%; /* Ocupan todo el ancho disponible */
+    }
+    .error-msg {
+        padding-left: 0;
+        position: relative;
+        bottom: auto;
+    }
+}
+
+
+/* Mensajes de error */
+.error-msg {
+    color: #dc3545;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    position: absolute;
+    bottom: -1.25rem;
+    left: 150px;
+    width: calc(100% - 150px);
+}
+
+/* Estilo para el switch de 2FA */
+.form-check.form-switch {
+    min-width: 50px;
+}
+
+#nombreDeUsuario {
+    background-color: #47a0ff;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    display: inline-block;
+    flex-grow: 0;
+    flex-shrink: 0;
+}

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Interfaz de administración - Incrementar Precio de Productos." />
+    <meta name="author" content="Tu Nombre/Empresa" />
+    <title>Incrementar Precio de Productos</title>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+    <link href="css/styles.css" rel="stylesheet" />
+    <link href="css/incrementar_precio/style.css" rel="stylesheet">
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+</head>
+<body class="sb-nav-fixed">
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0 rounded-md" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+        <a class="navbar-brand ps-3" href="index.html">Menú principal</a>
+        <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+            <div class="input-group">
+                </div>
+        </form>
+        <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle rounded-md" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="configuracionUsuario.html">Configuración</a></li>
+                    <li><hr class="dropdown-divider" /></li>
+                    <li><a class="dropdown-item"id="logoutButton" href="#">Cerrar sesión</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_nav">
+            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                <div class="sb-sidenav-menu">
+                    <div class="nav">
+                        <div class="sb-sidenav-menu-heading">Inicio</div>
+                        <a class="nav-link rounded-md" href="index.html">
+                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            Menú principal
+                        </a>
+                        <div class="sb-sidenav-menu-heading">Categorías</div>
+                        <a class="nav-link collapsed rounded-md" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="true" aria-controls="collapseLayouts">
+                            <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                            Productos
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse show" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link rounded-md" href="gestionarProductos.html">Gestionar Productos</a>
+                                <a class="nav-link rounded-md" href="gestionarMarcas.html">Gestionar Marcas</a>
+                                <a class="nav-link active rounded-md" href="incrementar_precio_productos.html">Incrementar Precio</a>
+                                <a class="nav-link rounded-md" href="decrementar_precio_productos.html">Decrementar Precio</a>
+                            </nav>
+                        </div>
+                        <a class="nav-link collapsed rounded-md" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+                            Ventas
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+                                <a class="nav-link rounded-md" href="realizarVenta.html">Realizar Venta</a>
+                                <a class="nav-link rounded-md" href="gestionarVentas.html">Gestionar Ventas</a>
+                            </nav>
+                        </div>
+                        <a class="nav-link collapsed rounded-md" href="#" data-bs-toggle="collapse" data-bs-target="#collapseClientes" aria-expanded="false" aria-controls="collapseClientes">
+                            <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                            Clientes
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapseClientes" aria-labelledby="headingThree" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link rounded-md" href="gestionarClientes.html">Gestionar Clientes</a>
+                            </nav>
+                        </div>
+                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReportes" aria-expanded="false" aria-controls="collapseReportes">
+                                <div class="sb-nav-link-icon"><i class="fas fa-chart-bar"></i></div>
+                                Reportes
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseReportes" aria-labelledby="headingFour" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="reporteVentas.html">Reporte de Ventas</a>
+                                    <a class="nav-link" href="reporteProductos.html">Reporte de Productos</a>
+                                </nav>
+                            </div>
+                    </div>
+                </div>
+                <div class="sb-sidenav-footer">
+                    <div class="small">Sesión iniciada como:</div>
+                    <span id="nombreEnFooter">Usuario Admin</span>
+                </div>
+            </nav>
+        </div>
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="container-fluid px-4">
+                    <h1 class="mt-4">Incrementar Precio de Productos</h1>
+                    <ol class="breadcrumb mb-4">
+                        <li class="breadcrumb-item"><a href="index.html">Menú Principal</a></li>
+                        <li class="breadcrumb-item active">Incrementar Precio</li>
+                    </ol>
+
+                    <div class="card mb-4 rounded-md shadow-sm">
+                        <div class="card-header">
+                            <i class="fas fa-dollar-sign me-1"></i>
+                            Seleccionar Productos e Incremento
+                        </div>
+                        <div class="card-body">
+                            <form id="formIncrementarPrecio">
+                                <div class="row mb-3 align-items-center">
+                                    <div class="col-md-4">
+                                        <label class="form-label mb-0">Aplicar incremento a:</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="tipoPrecio" id="radioPrecioMinorista" value="minorista" required>
+                                            <label class="form-check-label" for="radioPrecioMinorista">Precio Minorista</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="tipoPrecio" id="radioPrecioMayorista" value="mayorista" required>
+                                            <label class="form-check-label" for="radioPrecioMayorista">Precio Mayorista</label>
+                                        </div>
+                                        <div class="invalid-feedback" id="feedbackTipoPrecio">
+                                            Debes seleccionar si es precio minorista o mayorista.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-4 align-items-center">
+                                    <div class="col-md-4">
+                                        <label class="form-label mb-0">Tipo de incremento:</label>
+                                    </div>
+                                    <div class="col-md-8 precio-controls">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="tipoIncremento" id="radioMontoFijo" value="monto" required>
+                                            <label class="form-check-label" for="radioMontoFijo">Monto Fijo ($)</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="tipoIncremento" id="radioPorcentaje" value="porcentaje" required>
+                                            <label class="form-check-label" for="radioPorcentaje">Porcentaje (%)</label>
+                                        </div>
+                                        <input type="number" step="0.01" class="form-control d-inline-block w-auto" id="valorIncremento" placeholder="Valor" required min="0.01">
+                                        <div class="invalid-feedback" id="feedbackValorIncremento">
+                                            El valor del incremento es obligatorio y debe ser mayor a 0.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <button type="submit" class="btn btn-primary" id="btnAplicarIncremento"><i class="fas fa-arrow-alt-circle-up me-2"></i> Aplicar Incremento</button>
+                                </div>
+                            </form>
+
+                            <hr>
+
+                            <div class="card-header card-header-with-button border-0 bg-transparent">
+                                <h5 class="mb-0">Productos para Incrementar:</h5>
+                                <button class="btn btn-sm btn-outline-secondary" id="seleccionarTodos"><i class="fas fa-check-double me-1"></i> Seleccionar Todos</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="datatablesIncremento" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Nro Producto</th>
+                                            <th>Marca</th>
+                                            <th>Nombre</th>
+                                            <th>Peso</th>
+                                            <th>Stock</th>
+                                            <th>Precio Minorista</th>
+                                            <th>Precio Mayorista</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <th></th>
+                                            <th>Nro Producto</th>
+                                            <th>Marca</th>
+                                            <th>Nombre</th>
+                                            <th>Peso</th>
+                                            <th>Stock</th>
+                                            <th>Precio Minorista</th>
+                                            <th>Precio Mayorista</th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">&copy;Distribuidora Hasta el Hueso</div>
+                        <div>
+
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+    <script src="js/generic/showToast.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="js/scripts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+    <script src ="js/logout.js"></script>
+    <script src="js/incrementarPrecios/incrementarPrecios.js"></script>
+    <script src="js/generic/cargarUsuarioEnFooter.js"></script>
+</body>
+</html>

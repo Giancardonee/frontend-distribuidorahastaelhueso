@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Interfaz de administración con información de usuario." />
+    <meta name="author" content="Tu Nombre/Empresa" />
+    <title>Configuración</title>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+    <link href="css/styles.css" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+</head>
+<body class="sb-nav-fixed">
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0 rounded-md" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+        <a class="navbar-brand ps-3" href="index.html">Configuración</a>
+        <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+            <div class="input-group">
+            </div>
+        </form>
+        <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle rounded-md" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="configuracionUsuario.html">Configuración</a></li>
+                    <li><hr class="dropdown-divider" /></li>
+                    <li><a class="dropdown-item" id="logoutButton" href="#">Cerrar sesión</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_nav">
+            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                <div class="sb-sidenav-menu">
+                    <div class="nav">
+                        <div class="sb-sidenav-menu-heading">Inicio</div>
+                        <a class="nav-link rounded-md" href="index.html">
+                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            Menú principal
+                        </a>
+                        <div class="sb-sidenav-menu-heading">Categorías</div>
+                        <a class="nav-link collapsed rounded-md" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
+                            <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                            Productos
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link rounded-md" href="gestionarProductos.html">Gestionar Productos</a>
+                                <a class="nav-link rounded-md" href="gestionarMarcas.html">Gestionar Marcas</a>
+                                <a class="nav-link rounded-md" href="incrementar_precio_productos.html">Incrementar Precio</a>
+                                <a class="nav-link rounded-md" href="decrementar_precio_productos.html">Decrementar Precio</a>
+                            </nav>
+                        </div>
+                        <a class="nav-link collapsed rounded-md" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+                            Ventas
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+                                <a class="nav-link rounded-md" href="realizarVenta.html">Realizar Venta</a>
+                                <a class="nav-link rounded-md" href="gestionarVentas.html">Gestionar Ventas</a>
+                            </nav>
+                        </div>
+                        <a class="nav-link collapsed rounded-md" href="#" data-bs-toggle="collapse" data-bs-target="#collapseClientes" aria-expanded="false" aria-controls="collapseClientes">
+                            <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                            Clientes
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapseClientes" aria-labelledby="headingThree" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link rounded-md" href="gestionarClientes.html">Gestionar Clientes</a>
+                            </nav>
+                        </div>
+                        <a class="nav-link collapsed rounded-md" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReportes" aria-expanded="false" aria-controls="collapseReportes">
+                            <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div> Reportes
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapseReportes" aria-labelledby="headingFour" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="reporteVentas.html">Reporte de Ventas</a>
+                                <a class="nav-link" href="reporteProductos.html">Reporte de Productos</a>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+                <div class="sb-sidenav-footer">
+                    <div class="small">Sesión iniciada con usuario:</div>
+                    <span id="nombreEnFooter">@@Usuario Admin</span>
+                </div>
+            </nav>
+        </div>
+        <div id="layoutSidenav_content">
+            <main class="d-flex flex-column">
+                <div class="container-fluid px-4 flex-grow-1 d-flex flex-column">
+                    <div>
+                        <h1 class="mt-4">Información de Usuario</h1>
+                        <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item"><a href="index.html">Menú Principal</a></li>
+                            <li class="breadcrumb-item active">Configuración</li>
+                        </ol>
+                    </div>
+
+                    <div class="d-flex flex-column flex-grow-1 justify-content-center align-items-center">
+                        <div class="row w-100"> <div class="col-lg-8">
+                                <div class="card shadow-lg mb-4 custom-card">
+                                    <div class="card-header bg-primary text-white rounded-top">
+                                        <i class="fas fa-user-circle me-2"></i> Mi Perfil
+                                    </div>
+                                    <div class="card-body px-4 pb-4">
+                                        <div class="info-field">
+                                            <label for="nombreUsuario">Nombre:</label>
+                                            <input type="text" readonly id="nombreUsuario" value="XXXXXXX" />
+                                            <button type="button" class="edit-btn" aria-label="Editar nombre" title="Editar nombre">
+                                                <i class="fas fa-pencil-alt"></i>
+                                            </button>
+                                            <div class="error-msg"></div>
+                                        </div>
+
+                                        <div class="info-field">
+                                            <label for="apellidoUsuario">Apellido:</label>
+                                            <input type="text" readonly id="apellidoUsuario" value="XXXXXXX" />
+                                            <button type="button" class="edit-btn" aria-label="Editar apellido" title="Editar apellido">
+                                                <i class="fas fa-pencil-alt"></i>
+                                            </button>
+                                            <div class="error-msg"></div>
+                                        </div>
+
+                                        <div class="info-field">
+                                            <label>Nombre de usuario:</label>
+                                            <p id="nombreDeUsuario">XXXXXXX</p> 
+                                        </div>
+
+                                        <div class="info-field">
+                                            <label for="correoElectronico">Correo electrónico:</label>
+                                            <input type="email" readonly id="correoElectronico" value="XXXXXXX@gmail.com" />
+                                            <button type="button" class="edit-btn" aria-label="Editar correo electrónico" title="Editar correo electrónico">
+                                                <i class="fas fa-pencil-alt"></i>
+                                            </button>
+                                            <div class="error-msg"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 d-flex flex-column"> <div class="card shadow-lg mb-4 custom-card flex-grow-1"> <div class="card-header bg-warning text-white rounded-top">
+                                        <i class="fas fa-lock me-2"></i> Seguridad
+                                    </div>
+                                    <div class="card-body px-4 pb-4">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <span class="fw-bold text-dark">Contraseña:</span>
+                                            <button class="btn btn-sm btn-outline-warning text-dark" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                                                <i class="fas fa-key me-1"></i> Cambiar
+                                            </button>
+                                        </div>
+                                        <hr> </div>
+                                </div>         
+                                <div class="card shadow-lg mb-4 custom-card flex-grow-1"> <div class="card-header bg-secondary text-white rounded-top">
+                                        <i class="fas fa-history me-2"></i> Actividad Reciente
+                                    </div>
+                                    <div class="card-body px-4 pb-4" id="recentActivityCardBody">
+                                        <p class="mb-2 text-dark" id="lastLoginPlaceholder"><small>Cargando actividad...</small></p>
+                                        <div id="recentLoginsList">
+                                            </div>
+                                        <hr>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">&copy;Distribuidora Hasta el Hueso</div>
+                        <div>
+
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+    <script src="js/generic/showToast.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="js/scripts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+    <script src="js/datatables-simple-demo.js"></script>
+    <script src="js/configuracion/cargarDatos.js"></script>
+    <script src="js/configuracion/actulizarPerfil.js"></script>
+    <script src="js/configuracion/mostrarPassword.js"></script>
+    <script src="js/configuracion/actualizarPassword.js"></script>
+    <script src="js/configuracion/cargarActividadReciente.js"></script>
+    <link rel="stylesheet" href="css/configuracion/styles.css">
+    
+    <script src="js/logout.js"></script>
+
+        <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title" id="changePasswordModalLabel">Cambiar Contraseña</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="changePasswordForm">
+                        <div class="mb-3">
+                            <label for="currentPassword" class="form-label">Contraseña Actual</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="currentPassword" required>
+                                <button class="btn btn-outline-secondary toggle-password" type="button" data-target="currentPassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label">Nueva Contraseña</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="newPassword" required>
+                                <button class="btn btn-outline-secondary toggle-password" type="button" data-target="newPassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmNewPassword" class="form-label">Repetir Nueva Contraseña</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="confirmNewPassword" required>
+                                <button class="btn btn-outline-secondary toggle-password" type="button" data-target="confirmNewPassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-warning text-dark">Guardar Cambios</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

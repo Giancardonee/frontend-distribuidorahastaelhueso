@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="Página para establecer una nueva contraseña" />
+        <meta name="author" content="HastaElHueso" />
+        <title>Reestablecer Contraseña - Sistema de Ventas</title>
+        <link href="css/styles.css" rel="stylesheet" />
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <style>
+            /* Fuente Inter para una mejor estética */
+            body {
+                font-family: 'Inter', sans-serif;
+            }
+            /* Estilos para centrar el contenido verticalmente */
+            .reset-password-container {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh; /* Asegura que ocupe la altura completa del viewport */
+                background: linear-gradient(to right, #02a2ff, #5c5c5c); /* Un degradado similar al de login */
+            }
+
+            /* Estilos para el icono del ojo, similar a login.html */
+            .password-toggle {
+                position: absolute;
+                right: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+                cursor: pointer;
+                color: #6c757d;
+                transition: color 0.2s ease-in-out;
+            }
+
+            .password-toggle:hover {
+                color: #343a40;
+            }
+
+            /* Estilos de la tarjeta (card) para consistencia con login.html */
+            .card {
+                max-width: 450px; /* Limita el ancho de la tarjeta */
+                width: 100%;
+                border: none; /* Elimina el borde por defecto */
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Sombra mejorada */
+                border-radius: 1rem; /* Bordes más redondeados */
+                overflow: hidden; /* Asegura que el contenido respete el border-radius */
+            }
+
+            .card-header {
+                background-color: #f1f1f1; /* Fondo de encabezado ligeramente más claro */
+                border-bottom: 1px solid #dee2e6;
+                border-top-left-radius: 1rem;
+                border-top-right-radius: 1rem;
+            }
+
+            .form-floating > .form-control:focus ~ label,
+            .form-floating > .form-control:not(:placeholder-shown) ~ label,
+            .form-floating > .form-select ~ label {
+                opacity: .65;
+                transform: scale(.85) translateY(-0.5rem) translateX(0.15rem);
+            }
+
+            .btn-primary {
+                background-color: #15a1cc;
+                border-color: #8d8d8d;
+                font-weight: bold;
+                padding: 0.75rem 1.25rem;
+                transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+            }
+
+            .btn-primary:hover {
+                background-color: #0e6fca;
+                border-color: #020101;
+            }
+
+        </style>
+    </head>
+    <body class="bg-primary">
+        <div class="reset-password-container"> <div class="card shadow-lg border-0 rounded-lg"> <div class="card-header"><h3 class="text-center font-weight-light my-4">Reestablecer Contraseña</h3></div>
+                <div class="card-body">
+                    <div class="small mb-3 text-muted">Ingresa tu nueva contraseña a continuación.</div>
+                    <div id="messageContainer" class="mb-3"></div>
+                    <form id="passwordResetConfirmForm">
+                        <div class="form-floating mb-3 position-relative"> <input class="form-control" id="inputPassword" type="password" placeholder="Nueva Contraseña" required />
+                            <label for="inputPassword">Nueva Contraseña</label>
+                            <i class="fas fa-eye password-toggle" onclick="togglePasswordVisibility('inputPassword', this)"></i> </div>
+                        <div class="form-floating mb-3 position-relative"> <input class="form-control" id="inputConfirmPassword" type="password" placeholder="Confirmar Nueva Contraseña" required />
+                            <label for="inputConfirmPassword">Confirmar Nueva Contraseña</label>
+                            <i class="fas fa-eye password-toggle" onclick="togglePasswordVisibility('inputConfirmPassword', this)"></i> </div>
+                        <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                            <button type="submit" class="btn btn-primary">Restablecer Contraseña</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+        <script src="js/resetearPassword/resetPassword.js"></script>
+        <script>
+            function togglePasswordVisibility(id, icon) {
+                const input = document.getElementById(id);
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            }
+        </script>
+    </body>
+</html>

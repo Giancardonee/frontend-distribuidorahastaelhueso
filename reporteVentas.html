@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="Página de Reportes de Ventas" />
+        <meta name="author" content="" />
+        <title>Reporte de Ventas</title>
+        <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+        <link href="css/styles.css" rel="stylesheet" />
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+        <style>
+            /* Custom styles for the sales report page */
+            body {
+                font-family: "Inter", sans-serif;
+            }
+            .card-header-sales {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap; /* Allow wrapping on smaller screens */
+                gap: 1rem; /* Space between items */
+            }
+            .download-btn {
+                background-color: #0d6efd; /* Bootstrap primary blue */
+                color: white;
+                padding: 0.5rem 1rem;
+                border-radius: 0.375rem; /* rounded-md */
+                font-weight: 600; /* font-semibold */
+                transition: background-color 0.2s ease-in-out;
+            }
+            .download-btn:hover {
+                background-color: #0a58ca; /* Darker blue on hover */
+            }
+            /* Adjust canvas height for smaller bars */
+            #salesBarChart {
+                max-height: 350px; /* Adjust this value to control bar height */
+            }
+
+            /* Custom card styling to replace Tailwind's rounded-lg and shadow-md */
+            .custom-card {
+                border-radius: 0.5rem; /* Equivalent to rounded-lg */
+                box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Equivalent to shadow-md */
+            }
+
+            /* Modal Styles */
+            .modal-overlay {
+                display: none; /* Hidden by default */
+                position: fixed; /* Stay in place */
+                z-index: 1050; /* Sit on top */
+                left: 0;
+                top: 0;
+                width: 100%; /* Full width */
+                height: 100%; /* Full height */
+                overflow: auto; /* Enable scroll if needed */
+                background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+                justify-content: center; /* Center horizontally */
+                align-items: center; /* Center vertically */
+            }
+            .modal-overlay.show {
+                display: flex; /* Show when 'show' class is added */
+            }
+            .modal-content-custom {
+                background-color: #fefefe;
+                margin: auto; /* Centered */
+                padding: 20px;
+                border: 1px solid #888;
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+                position: relative;
+                max-width: 90%; /* Responsive width */
+                width: 600px; /* Default width */
+                transform: translateY(-50px); /* Initial state for animation */
+                transition: transform 0.3s ease-in-out;
+            }
+            .modal-content-custom.modal-lg {
+                width: 800px; /* Larger width for the advanced filter modal */
+                max-width: 95%;
+            }
+            .modal-overlay.show .modal-content-custom {
+                transform: translateY(0); /* Final state for animation */
+            }
+            .modal-header-custom {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 1px solid #dee2e6;
+                padding-bottom: 1rem;
+                margin-bottom: 1rem;
+            }
+            .modal-header-custom h3 {
+                margin-bottom: 0;
+                font-size: 1.5rem;
+                color: #333;
+            }
+            .modal-close-btn {
+                color: #aaa;
+                font-size: 28px;
+                font-weight: bold;
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 0;
+            }
+            .modal-close-btn:hover,
+            .modal-close-btn:focus {
+                color: #000;
+                text-decoration: none;
+                cursor: pointer;
+            }
+            .modal-body-custom {
+                padding-bottom: 1rem;
+                max-height: 400px; /* Ensure content can scroll */
+                overflow-y: auto;
+            }
+            .modal-footer {
+                padding-top: 1rem;
+                border-top: 1px solid #dee2e6;
+                display: flex;
+                justify-content: flex-end;
+            }
+            /* Custom text styling to replace Tailwind's text-xl font-semibold text-gray-800 */
+            .chart-title-text {
+                font-size: 1.25rem; /* text-xl */
+                font-weight: 600; /* font-semibold */
+                color: #343a40; /* A dark gray similar to text-gray-800 */
+            }
+            /* Custom flex and gap for filters to replace Tailwind's flex flex-wrap items-center gap-3 */
+            .filter-controls {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 0.75rem; /* Approximately gap-3 */
+            }
+            .no-data-message {
+                text-align: center;
+                padding: 2rem;
+                color: #666;
+                font-size: 1.1rem;
+            }
+        </style>
+    </head>
+    <body class="sb-nav-fixed">
+        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+            <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+            <a class="navbar-brand ps-3" href="index.html">Menú principal</a>
+            <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+                <div class="input-group">
+                </div>
+            </form>
+            <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="true"><i class="fas fa-user fa-fw"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="configuracionUsuario.html">Configuracion</a></li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item" href="#!">Cerrar sesion</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        <div id="layoutSidenav">
+            <div id="layoutSidenav_nav">
+                <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                    <div class="sb-sidenav-menu">
+                        <div class="nav">
+                            <div class="sb-sidenav-menu-heading">Inicio</div>
+                            <a class="nav-link" href="index.html">
+                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                Menu principal
+                            </a>
+                            <div class="sb-sidenav-menu-heading">Categorias</div>
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
+                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                                Productos
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="gestionarProductos.html">Gestionar Productos</a>
+                                    <a class="nav-link" href="gestionarMarcas.html">Gestionar Marcas</a>
+                                    <a class="nav-link" href="incrementar_precio_productos.html">Incrementar Precio</a>
+                                    <a class="nav-link" href="decrementar_precio_productos.html">Decrementar Precio</a>
+                                </nav>
+                            </div>
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+                                <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+                                Ventas
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+                                    <a class="nav-link" href="realizarVenta.html">Realizar Venta</a>
+                                    <a class="nav-link" href="gestionarVentas.html">Gestionar Ventas</a>
+                                </nav>
+                            </div>
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseClientes" aria-expanded="false" aria-controls="collapseClientes">
+                                <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                                Clientes
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseClientes" aria-labelledby="headingThree" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="gestionarClientes.html">Gestionar Clientes</a>
+                                </nav>
+                            </div>
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReportes" aria-expanded="false" aria-controls="collapseReportes">
+                                <div class="sb-nav-link-icon"><i class="fas fa-chart-bar"></i></div>
+                                Reportes
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse show" id="collapseReportes" aria-labelledby="headingFour" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link active rounded-md" href="reporteVentas.html">Reporte de Ventas</a>
+                                    <a class="nav-link" href="reporteProductos.html">Reporte de Productos</a>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                <div class="sb-sidenav-footer">
+                        <div class="small">Sesión iniciada como:</div>
+                        <span id="nombreEnFooter">Usuario Admin</span>
+                </div>
+                </nav>
+
+            </div>
+            <div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid px-4">
+                        <h1 class="mt-4">Reporte de Ventas Mensuales</h1>
+                    <ol class="breadcrumb mb-4">
+                        <li class="breadcrumb-item"><a href="index.html">Menú Principal</a></li>
+                        <li class="breadcrumb-item active">Reporte de Ventas</li>
+                    </ol>
+                        <div class="row">
+                            <div class="col-xl-12">
+                                <div class="card mb-4 custom-card">
+                                    <div class="card-header card-header-sales p-4 bg-light rounded-top">
+                                        <h2 id="chartTitle" class="chart-title-text">
+                                            <i class="fas fa-chart-bar me-2"></i>
+                                            Ventas por Mes
+                                        </h2>
+                                        <div class="filter-controls">
+                                            <select id="yearSelector" class="form-select form-select-sm" aria-label="Seleccionar Año">
+                                                <option value="2023">2023</option>
+                                                <option value="2024">2024</option>
+                                                <option value="2025" selected>2025</option>
+                                            </select>
+                                            
+                                            <button type="button" class="btn btn-outline-secondary btn-sm" id="openAdvancedFilterModalBtn">
+                                                <i class="fas fa-filter me-2"></i> Filtros Avanzados
+                                            </button>
+                                            
+                                            <button id="downloadPdfBtn" class="download-btn">
+                                                <i class="fas fa-file-pdf me-2"></i>
+                                                Descargar PDF del Gráfico
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-4">
+                                        <canvas id="salesBarChart" width="100%" height="150"></canvas>
+                                        <div id="noDataMessage" class="no-data-message" style="display: none;">
+                                            No hay datos de ventas disponibles para el período o filtros seleccionados.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+                <footer class="py-4 bg-light mt-auto">
+                    <div class="container-fluid px-4">
+                        <div class="d-flex align-items-center justify-content-between small">
+                            <div class="text-muted">&copy; Distribuidora Hasta el Hueso</div>
+                        </div>
+                    </div>
+                    <div aria-live="polite" aria-atomic="true" class="position-relative">
+                        <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+                            </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+
+        <div id="salesDetailModal" class="modal-overlay">
+            <div class="modal-content-custom">
+                <div class="modal-header-custom">
+                    <h3 id="modalTitle" class="text-lg font-semibold">Detalle de Ventas de [Mes Seleccionado]</h3>
+                    <button type="button" class="modal-close-btn" aria-label="Close" id="closeModalBtn">&times;</button>
+                </div>
+                <div class="modal-body-custom">
+                    <p class="font-bold mb-3"><strong>Ventas Totales:</strong> <span id="modalTotalSales"></span></p>
+                    <h4 class="font-medium mt-4 mb-2">Lista de Ventas:</h4>
+                    <ul id="salesList" class="list-unstyled">
+                        </ul>
+                    <p class="text-sm text-muted mt-4">Aquí se mostrarían las ventas detalladas del mes seleccionado.</p>
+                </div>
+                <div class="modal-footer d-flex justify-content-end mt-4 pt-4 border-top border-gray-200">
+                    <button id="downloadMonthlyReportBtn" class="download-btn">
+                        <i class="fas fa-file-pdf me-2"></i>
+                        Descargar Reporte Mensual
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="advancedFilterModal" class="modal-overlay">
+            <div class="modal-content-custom modal-lg">
+                <div class="modal-header-custom">
+                    <h3 class="text-lg font-semibold">Configurar Filtros de Ventas</h3>
+                    <button type="button" class="modal-close-btn" aria-label="Close" id="closeAdvancedFilterModalBtn">&times;</button>
+                </div>
+                <div class="modal-body-custom">
+                    <div class="mb-3">
+                        <label class="form-label d-block mb-2">Filtrar por:</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="filterOption" id="filterOptionAllProducts" value="all_products" checked>
+                            <label class="form-check-label" for="filterOptionAllProducts">Todos los Productos</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="filterOption" id="filterOptionSpecificBrand" value="specific_brand">
+                            <label class="form-check-label" for="filterOptionSpecificBrand">Una Marca Específica</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="filterOption" id="filterOptionSpecificClient" value="specific_client">
+                            <label class="form-check-label" for="filterOptionSpecificClient">Un Cliente Específico</label>
+                        </div>
+                    </div>
+
+                    <div id="specificBrandSection" class="mb-3" style="display: none;">
+                        <label for="brandList" class="form-label">Seleccionar Marca:</label>
+                        <select class="form-select" id="brandList">
+                            </select>
+                        <small class="form-text text-muted" id="selectedBrandInfo">Marca Seleccionada: Ninguna</small>
+                    </div>
+
+                    <div id="specificClientSection" class="mb-3" style="display: none;">
+                        <label for="clientSearchInput" class="form-label">Buscar Cliente:</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="clientSearchInput" placeholder="Nombre o apellido del cliente">
+                            <button class="btn btn-outline-secondary" type="button" id="searchClientBtn"><i class="fas fa-search"></i></button>
+                        </div>
+                        <select class="form-select mt-2" id="clientList" size="5" style="min-height: 120px;">
+                            </select>
+                        <small class="form-text text-muted" id="selectedClientInfo">Cliente Seleccionado: Ninguna</small>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-end mt-4 pt-4 border-top border-gray-200">
+                    <button type="button" class="btn btn-secondary me-2" id="cancelFilterBtn">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="applyFilterBtn">Aplicar Filtros</button>
+                </div>
+            </div>
+        </div>
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="js/scripts.js"></script>
+        <script src="js/generic/showtoast.js"></script> 
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>
+        <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+        <script src="js/datatables-simple-demo.js"></script>
+
+        <script src="js/generarReporteVentas/scriptReporte.js"></script>
+        <script src="js/generic/showToast.js"></script>
+
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        <script src="js/generic/cargarUsuarioEnFooter.js"></script>
+    </body>
+</html>

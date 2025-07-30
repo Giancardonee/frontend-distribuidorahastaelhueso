@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="Página para solicitar el restablecimiento de contraseña" />
+        <meta name="author" content="HastaElHueso" />
+        <title>Recuperar Contraseña - Sistema de Ventas</title>
+        <link href="css/styles.css" rel="stylesheet" />
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <style>
+            /* Fuente Inter para una mejor estética */
+            body {
+                font-family: 'Inter', sans-serif;
+            }
+            /* Estilos para centrar el contenido verticalmente, copiados de restablecer-contrasena.html */
+            .request-password-container { /* Nueva clase para diferenciar, pero con mismos estilos */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh; /* Asegura que ocupe la altura completa del viewport */
+                background: linear-gradient(to right, #02a2ff, #5c5c5c); /* Un degradado similar */
+            }
+
+            /* Estilos de la tarjeta (card) para consistencia */
+            .card {
+                max-width: 450px; /* Limita el ancho de la tarjeta */
+                width: 100%;
+                border: none; /* Elimina el borde por defecto */
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Sombra mejorada */
+                border-radius: 1rem; /* Bordes más redondeados */
+                overflow: hidden; /* Asegura que el contenido respete el border-radius */
+            }
+
+            .card-header {
+                background-color: #f1f1f1; /* Fondo de encabezado ligeramente más claro */
+                border-bottom: 1px solid #dee2e6;
+                border-top-left-radius: 1rem;
+                border-top-right-radius: 1rem;
+            }
+            
+            .form-floating > .form-control:focus ~ label,
+            .form-floating > .form-control:not(:placeholder-shown) ~ label,
+            .form-floating > .form-select ~ label {
+                opacity: .65;
+                transform: scale(.85) translateY(-0.5rem) translateX(0.15rem);
+            }
+
+            .btn-primary {
+                background-color: #15a1cc;
+                border-color: #8d8d8d;
+                font-weight: bold;
+                padding: 0.75rem 1.25rem;
+                transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+            }
+
+            .btn-primary:hover {
+                background-color: #0e6fca;
+                border-color: #020101;
+            }
+            .card-footer a {
+                color: #15a1cc; /* Color para los enlaces del footer */
+                text-decoration: none;
+            }
+            .card-footer a:hover {
+                text-decoration: underline;
+            }
+
+        </style>
+    </head>
+    <body class="bg-primary">
+        <div class="request-password-container"> <div class="card shadow-lg border-0 rounded-lg"> <div class="card-header"><h3 class="text-center font-weight-light my-4">Recuperación de Contraseña</h3></div>
+                <div class="card-body">
+                    <div class="small mb-3 text-muted">Ingresa tu dirección de correo electrónico y te enviaremos un enlace para restablecer tu contraseña.</div>
+                    <div id="messageContainer" class="mb-3"></div>
+                    <form id="passwordResetRequestForm">
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="inputEmail" type="email" placeholder="nombre@ejemplo.com" required />
+                            <label for="inputEmail">Dirección de correo electrónico</label>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                            <a class="small" href="login.html">Volver al inicio de sesión</a>
+                            <button type="submit" class="btn btn-primary">Restablecer Contraseña</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+        <script src="js/resetearPassword/resetPassword.js"></script>
+    </body>
+</html>

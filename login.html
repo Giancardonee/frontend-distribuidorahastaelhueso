@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Iniciar Sesión</title>
+        <link href="css/styles.css" rel="stylesheet" />
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <style>
+            
+            .card-header h1 {
+                font-family: 'Arial Black', Gadget, sans-serif; 
+                color: #343a40; 
+                font-size: 2.5rem; 
+                font-weight: 900; 
+                text-align: center;
+                margin-bottom: 0; 
+                padding: 20px 0; 
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); 
+            }
+
+           
+            .login-container {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh; 
+                background: linear-gradient(to right, #02a2ff, #5c5c5c); 
+            }
+
+           
+            .card {
+                max-width: 450px; 
+                width: 100%;
+                border: none; 
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+                border-radius: 1rem; 
+                overflow: hidden; 
+            }
+
+            .card-header {
+                background-color: #f1f1f1; 
+                border-bottom: 1px solid #dee2e6;
+                border-top-left-radius: 1rem;
+                border-top-right-radius: 1rem;
+            }
+
+            .form-floating > .form-control:focus ~ label,
+            .form-floating > .form-control:not(:placeholder-shown) ~ label,
+            .form-floating > .form-select ~ label {
+                opacity: .65;
+                transform: scale(.85) translateY(-0.5rem) translateX(0.15rem);
+            }
+
+           
+            .btn-primary {
+                background-color: #15a1cc; 
+                border-color: #8d8d8d;
+                font-weight: bold;
+                padding: 0.75rem 1.25rem;
+                transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+            }
+
+            .btn-primary:hover {
+                background-color: #0e6fca; 
+                border-color: #020101;
+            }
+
+            
+            .password-toggle {
+                position: absolute;
+                right: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+                cursor: pointer;
+                color: #6c757d;
+                transition: color 0.2s ease-in-out;
+            }
+
+            .password-toggle:hover {
+                color: #343a40;
+            }
+
+           
+            .small {
+                color: #007bff; 
+                text-decoration: none;
+            }
+
+            .small:hover {
+                text-decoration: underline;
+            }
+
+            
+            a.small {
+                color: #6c757d; 
+            }
+            a.small:hover {
+                color: #495057;
+            }
+
+           
+            .form-error-message {
+                color: #dc3545; 
+                font-size: 0.875em; 
+                margin-top: -10px; 
+                margin-bottom: 10px;
+            }
+        </style>
+    </head>
+    <body class="bg-primary">
+        <div class="login-container">
+            <div class="card shadow-lg border-0 rounded-lg">
+                <div class="card-header">
+                    <h1 class="text-center">Distribuidora Hasta el Hueso</h1>
+                    <h5 class="text-center">Iniciar Sesion</h5>
+                </div>
+                <div class="card-body">
+                    <form id="loginForm">
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="inputNombreUsuario" type="text" placeholder="Tu nombre de usuario" required />
+                            <label for="inputNombreUsuario">Nombre de usuario</label>
+                        </div>
+                        <div class="form-floating mb-3 position-relative">
+                            <input class="form-control" id="inputPassword" type="password" placeholder="Password" required />
+                            <label for="inputPassword">Contraseña</label>
+                            <i class="fas fa-eye password-toggle" onclick="togglePassword()"></i>
+                        </div>
+                        <div id="formSpecificErrorMessage" class="form-error-message" style="display: none;"></div>
+
+                        <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                            <a class="small" href="solicitar-restablecimiento.html">¿Olvidaste tu contraseña?</a>
+                            <button class="btn btn-primary" type="submit">Ingresar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+
+        <script src="js/login/mostrarPassword.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+        <script src="js/scripts.js"></script> 
+        <script src="js/generic/showToast.js"></script>
+        <script src="js/login/auth.js"></script>
+    </body>
+</html>

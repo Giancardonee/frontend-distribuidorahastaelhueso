@@ -1,0 +1,45 @@
+   /* Alineación del card header */
+        .card-header-with-button {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        /* Estilos para badges de deuda */
+        .badge-deuda-cero {
+            background-color: #28a745; /* Verde para deuda cero */
+            color: white;
+            padding: .3em .6em;
+            border-radius: .25rem;
+        }
+        .badge-con-deuda {
+            background-color: #ffc107; /* Amarillo/Naranja para con deuda */
+            color: #212529; /* Texto oscuro para contraste */
+            padding: .3em .6em;
+            border-radius: .25rem;
+        }
+        /* Estilos para los encabezados de columna en el modal de venta */
+        .header-col-venta {
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        /* Ocultar etiquetas para datalist si se usan spans como headers */
+        .visually-hidden-on-small-screens {
+            display: none;
+        }
+        @media (min-width: 768px) {
+            .visually-hidden-on-small-screens {
+                display: block; /* Mostrar en pantallas medianas y grandes */
+            }
+        }
+        /* Ajuste para los radio buttons en la línea de producto */
+        .producto-tipo-precio-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px; /* Espacio entre los radios */
+            margin-top: 5px;
+            font-size: 0.85em; /* Tamaño de fuente más pequeño */
+        }
+        .producto-tipo-precio-container .form-check-inline {
+            margin-right: 0.5rem; /* Ajustar margen para que no ocupe tanto */
+        }

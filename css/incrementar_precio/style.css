@@ -1,0 +1,30 @@
+/* Alineación del card header */
+        .card-header-with-button {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        /* Estilos para el espacio entre botones y checkboxes */
+        .form-check {
+            margin-right: 15px;
+        }
+        .form-check-inline {
+            margin-right: 1.5rem; /* Espacio entre radios */
+        }
+        .precio-controls .form-control {
+            max-width: 200px; /* Ancho limitado para los inputs de precio/porcentaje */
+            display: inline-block; /* Para que el label y el input estén en la misma línea */
+            margin-left: 10px;
+        }
+        .precio-controls label {
+            min-width: 80px; /* Para alinear los labels si es necesario */
+        }
+        .invalid-feedback {
+            display: none; /* Ocultar por defecto */
+            color: #dc3545; /* Color de error de Bootstrap */
+            font-size: 0.875em;
+            margin-top: 0.25rem;
+        }
+        .is-invalid + .invalid-feedback {
+            display: block; /* Mostrar cuando el campo es inválido */
+        }

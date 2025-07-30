@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Interfaz de administración - Registrar Nueva Venta." />
+    <meta name="author" content="Tu Nombre/Empresa" />
+    <title>Registrar Nueva Venta</title>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+    <link href="css/styles.css" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+</head>
+<body class="sb-nav-fixed">
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0 rounded-md" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+        <a class="navbar-brand ps-3" href="index.html">Menú principal</a>
+        <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+            </form>
+        <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="configuracionUsuario.html">Configuración</a></li>
+                    <li><a class="dropdown-item" href="#!" id="logoutButton">Cerrar Sesión</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_nav">
+            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                <div class="sb-sidenav-menu">
+                    <div class="nav">
+                        <div class="sb-sidenav-menu-heading">Inicio</div>
+                        <a class="nav-link" href="index.html">
+                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            Menu principal
+                        </a>
+                        <div class="sb-sidenav-menu-heading">Categorias</div>
+                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
+                            <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                            Productos
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="gestionarProductos.html">Gestionar Productos</a>
+                                <a class="nav-link" href="gestionarMarcas.html">Gestionar Marcas</a>
+                                <a class="nav-link" href="incrementar_precio_productos.html">Incrementar Precio</a>
+                                <a class="nav-link" href="decrementar_precio_productos.html">Decrementar Precio</a>
+                            </nav>
+                        </div>
+                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
+                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+                            Ventas
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse show" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+                                <a class="nav-link active rounded-md"href="realizarVenta.html">Realizar Venta</a>
+                                <a class="nav-link" href="gestionarVentas.html">Gestionar Ventas</a>
+                            </nav>
+                        </div>
+                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseClientes" aria-expanded="false" aria-controls="collapseClientes">
+                            <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                            Clientes
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapseClientes" aria-labelledby="headingThree" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="gestionarClientes.html">Gestionar Clientes</a>
+                            </nav>
+                        </div>
+                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReportes" aria-expanded="false" aria-controls="collapseReportes">
+                                <div class="sb-nav-link-icon"><i class="fas fa-chart-bar"></i></div>
+                                Reportes
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseReportes" aria-labelledby="headingFour" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="reporteVentas.html">Reporte de Ventas</a>
+                                    <a class="nav-link" href="reporteProductos.html">Reporte de Productos</a>
+                                </nav>
+                            </div>
+                    </div>
+                </div>
+                <div class="sb-sidenav-footer">
+                    <div class="small">Sesión iniciada como:</div>
+                    <span id="nombreEnFooter">Usuario Admin</span>
+                </div>
+                </nav>
+        </div>
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="container-fluid px-4">
+                    <h1 class="mt-4">Registrar Nueva Venta</h1>
+                    <ol class="breadcrumb mb-4">
+                        <li class="breadcrumb-item"><a href="index.html">Menú Principal</a></li>
+                        <li class="breadcrumb-item active">Registrar Venta</li>
+                    </ol>
+
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-cash-register me-1"></i>
+                            Formulario de Nueva Venta
+                        </div>
+                        <div class="card-body">
+                            <form id="formRegistrarVenta">
+                               <div class="row"> <div class="col-md-6 mb-3"> <label for="ventaClienteNombre" class="form-label">Cliente:</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="ventaClienteNombre" placeholder="Seleccionar cliente" readonly>
+                                            <input type="hidden" id="ventaClienteId">
+                                            <button class="btn btn-outline-secondary rounded-md" type="button" id="btnAbrirBuscadorCliente">Buscar Cliente</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <h5>Productos de la Venta</h5>
+                                <div id="productosVentaContainer">
+                                
+                                </div>
+                                <button type="button" class="btn btn-success mt-2 rounded-md" id="btnAgregarProducto">Agregar Producto</button>
+
+                                <hr>
+                                <div class="text-end">
+                                    <h4>Total: <span id="ventaTotalVenta">$0.00</span></h4>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary rounded-md mt-3">Registrar Venta</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+            </main>
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">&copy;Distribuidora Hasta el Hueso</div>
+                        <div>
+
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalBuscarCliente" tabindex="-1" aria-labelledby="modalBuscarClienteLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalBuscarClienteLabel">Buscar Cliente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="searchClienteInput" class="form-label">Buscar por Nombre o Apellido:</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="searchClienteInput" placeholder="Ingrese acá...">
+                            <button class="btn btn-primary rounded-md" type="button" id="btnBuscarClienteModal"><i class="fas fa-search me-1"></i> Buscar</button>
+                        </div>
+                    </div>
+
+                    <div id="clientSearchResults" class="mt-3">
+                        <p class="text-muted">Escribe un nombre o apellido y haz clic en "Buscar".</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary rounded-md" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalBuscarProducto" tabindex="-1" aria-labelledby="modalBuscarProductoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalBuscarProductoLabel">Buscar Producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="searchProductoInput" class="form-label">Buscar por Nombre de Producto:</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="searchProductoInput" placeholder="Ingrese acá...">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="searchMarcaSelect" class="form-label">Filtrar por Marca:</label>
+                        <select class="form-select" id="searchMarcaSelect">
+                            <option value="">-- Todas las marcas --</option>
+                            </select>
+                    </div>
+
+                    <div class="mb-3 text-center"> <button class="btn btn-primary rounded-md" type="button" id="btnBuscarProductoModal"><i class="fas fa-search me-1"></i> Buscar</button>
+                    </div>
+
+                    <div id="productSearchResults" class="mt-3">
+                        <p class="text-muted">Escribe un nombre de producto y/o selecciona una marca y haz clic en "Buscar".</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary rounded-md" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+ <div class="modal fade" id="modalDetalleVenta" tabindex="-1" aria-labelledby="modalDetalleVentaLabel" aria-hidden="true">
+       <div class="modal-dialog modal-dialog-lg modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="modalDetalleVentaLabel">Detalle de Venta #<span id="detalleVentaId"></span></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="mb-3">
+                <strong>Fecha:</strong> <span id="detalleVentaFecha"></span><br>
+                <strong>Cliente:</strong> <span id="detalleVentaCliente"></span><br>
+                <strong>Usuario:</strong> <span id="detalleVentaUsuario"></span>
+            </div>
+            <h6>Productos:</h6>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>P. Unitario</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detalleVentaProductos">
+                        </tbody>
+                    <tfoot id="detalleVentaFooter">
+                        </tfoot>
+                </table>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary rounded-md" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-primary rounded-md" id="btnDescargarComprobante">Descargar Comprobante</button>
+        </div>
+    </div>
+</div>
+ </div>
+
+    <div class="modal fade" id="modalAplicarDescuento" tabindex="-1" aria-labelledby="modalAplicarDescuentoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalAplicarDescuentoLabel">Aplicar Descuento por Unidad</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="descuentoProductoNombre" class="form-label">Producto:</label>
+                        <input type="text" class="form-control" id="descuentoProductoNombre" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="descuentoPrecioUnitarioActual" class="form-label">Precio Unitario Actual:</label>
+                        <input type="text" class="form-control" id="descuentoPrecioUnitarioActual" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputTipoDescuento" class="form-label">Tipo de Descuento:</label>
+                        <div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="tipoDescuento" id="radioDescuentoMonto" value="MONTO" checked>
+                                <label class="form-check-label" for="radioDescuentoMonto">Monto Fijo ($)</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="tipoDescuento" id="radioDescuentoPorcentaje" value="PORCENTAJE">
+                                <label class="form-check-label" for="radioDescuentoPorcentaje">Porcentaje (%)</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputValorDescuento" class="form-label">Valor del Descuento:</label>
+                        <input type="number" step="0.01" class="form-control" id="inputValorDescuento" min="0" value="0">
+                    </div>
+                    <div class="mb-3">
+                        <label for="descuentoPrecioUnitarioConDescuento" class="form-label">Precio Unitario con Descuento:</label>
+                        <input type="text" class="form-control fw-bold" id="descuentoPrecioUnitarioConDescuento" readonly>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary rounded-md" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary rounded-md" id="btnConfirmarDescuento">Aplicar Descuento</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="js/scripts.js"></script>
+    <script src="js/generic/cargarUsuarioEnFooter.js"></script>
+    <script src="js/logout.js"></script>
+    <script src="js/realizarVenta/scriptRealizarVenta.js"></script>
+    
+</body>
+</html>

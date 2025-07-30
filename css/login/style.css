@@ -1,0 +1,21 @@
+            .login-container {
+                min-height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .card {
+                width: 100%;
+                max-width: 500px;
+            }
+            .password-toggle {
+                position: absolute;
+                top: 50%;
+                right: 10px;
+                transform: translateY(-50%);
+                cursor: pointer;
+                color: #6c757d;
+            }
+            .position-relative {
+                position: relative;
+            }
