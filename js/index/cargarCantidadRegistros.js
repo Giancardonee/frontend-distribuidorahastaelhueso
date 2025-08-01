@@ -47,9 +47,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 3. URLs de tus endpoints de conteo (ajusta si es necesario)
     const baseUrl = 'http://localhost:8080/distribuidora'; 
     const endpoints = {
-        ventas: `${baseUrl}/ventas/contarRegistros`,    // CAMBIADO A /contarRegistros
-        productos: `${baseUrl}/productos/contarRegistros`, // CAMBIADO A /contarRegistros
-        clientes: `${baseUrl}/clientes/contarRegistros`, // CAMBIADO A /contarRegistros
+        ventas: `${baseUrl}/ventas/contarRegistros`,   
+        productos: `${baseUrl}/productos/contarRegistros`, 
+        clientes: `${baseUrl}/clientes/contarRegistros`, 
         marcas: `${baseUrl}/marcas/contarRegistros`      
     };
 
@@ -58,14 +58,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const productosCard = document.getElementById('cantidadProductos'); // Reemplaza con tus IDs reales
     const clientesCard = document.getElementById('cantidadClientes'); // Reemplaza con tus IDs reales
     const marcasCard = document.getElementById('cantidadMarcas');     // Reemplaza con tus IDs reales
-
-    // ¡IMPORTANTE! Asegúrate de que los IDs en tu HTML coincidan con estos.
-    // Si tus cards tienen los conteos dentro de un <div> o <p> con un ID específico,
-    // asegúrate de seleccionar ese elemento. Por ejemplo:
-    // <div class="card-body">
-    //     <div id="cantidadVentas" class="h5 mb-0 font-weight-bold text-gray-800"></div>
-    // </div>
-
 
     // 5. Cargar todos los conteos en paralelo
     const [ventasCount, productosCount, clientesCount, marcasCount] = await Promise.all([
@@ -101,10 +93,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (marcasCard) marcasCard.textContent = 'N/A';
     }
 
-    // Opcional: Si quieres mostrar el nombre de usuario, asumiendo que tu token JWT lo contiene
-    // (Esto requeriría decodificar el token en el frontend o tener un endpoint de usuario)
-    // Para simplificar, si quieres el nombre, es mejor tener un endpoint /api/user/me que devuelva los detalles del usuario logueado.
-    // Por ahora, no lo incluyo, pero es una extensión común.
 });
 
 // Puedes agregar una función para cerrar sesión si tienes un botón de "Logout"

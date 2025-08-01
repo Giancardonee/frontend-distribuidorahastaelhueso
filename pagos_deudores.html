@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Pagos y Deudores</title>
+        <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+        <link href="css/styles.css" rel="stylesheet" />
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <style>
+            /* Estilos para los cuadros de estado de deuda */
+            .deuda-al-dia {
+                background-color: #28a745; /* Verde */
+                color: white;
+                padding: 5px 10px;
+                border-radius: 5px;
+                font-weight: bold;
+                text-align: center;
+            }
+            .deuda-con-deuda {
+                background-color: #dc3545; /* Rojo */
+                color: white;
+                padding: 5px 10px;
+                border-radius: 5px;
+                font-weight: bold;
+                text-align: center;
+            }
+            /* Estilo base para los botones de filtro no activos (gris oscuro) */
+            .btn-dark-outline {
+                background-color: #343a40;
+                color: white;
+                border-color: #495057;
+            }
+            .btn-dark-outline:hover,
+            .btn-dark-outline:focus {
+                background-color: #495057;
+                color: white;
+            }
+            /* Estilos para los botones activos */
+            .btn-dark-outline.active[data-filtro="todos"] {
+                background-color: #0d6efd; /* Color azul de primary */
+                border-color: #0d6efd;
+                color: white;
+            }
+            .btn-dark-outline.active[data-filtro="deudores"] {
+                background-color: #dc3545; /* Color rojo de danger */
+                border-color: #dc3545;
+                color: white;
+            }
+            .btn-dark-outline.active[data-filtro="sin-deuda"] {
+                background-color: #198754; /* Color verde de success */
+                border-color: #198754;
+                color: white;
+            }
+        </style>
+    </head>
+    <body class="sb-nav-fixed">
+        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+            <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+            <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+                <div class="input-group">
+                </div>
+            </form>
+            <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="configuracionUsuario.html">Configuracion</a></li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item" href="#!">Cerrar sesion</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        <div id="layoutSidenav">
+            <div id="layoutSidenav_nav">
+                <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                    <div class="sb-sidenav-menu">
+                        <div class="nav">
+                            <div class="sb-sidenav-menu-heading">Inicio</div>
+                            <a class="nav-link" href="index.html">
+                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                Menu principal
+                            </a>
+                            <div class="sb-sidenav-menu-heading">Categorias</div>
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
+                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                                Productos
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="gestionarProductos.html">Gestionar Productos</a>
+                                    <a class="nav-link" href="gestionarMarcas.html">Gestionar Marcas</a>
+                                    <a class="nav-link" href="incrementar_precio_productos.html">Incrementar Precio</a>
+                                    <a class="nav-link" href="decrementar_precio_productos.html">Decrementar Precio</a>
+                                </nav>
+                            </div>
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+                                <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+                                Ventas
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+                                    <a class="nav-link" href="gestionarVentas.html">Gestionar Ventas</a>
+                                </nav>
+                            </div>
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseClientes" aria-expanded="false" aria-controls="collapseClientes">
+                                <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                                Clientes
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseClientes" aria-labelledby="headingThree" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="gestionarClientes.html">Gestionar Clientes</a>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+            <div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid px-4">
+                        <h1 class="mt-4">Pagos y Deudores</h1>
+                        <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item active">Listado de clientes</li>
+                        </ol>
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-filter me-1"></i>
+                                Opciones de búsqueda y filtro
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3 align-items-center">
+                                    <div class="col-md-4">
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                            <input type="text" id="inputBuscarCliente" class="form-control" placeholder="Buscar por nombre o apellido..." />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 d-flex justify-content-center">
+                                        <button type="button" class="btn btn-dark-outline me-2 active" id="btnFiltrarTodos" data-filtro="todos">
+                                            Todos <span class="badge text-bg-light" id="badgeTodos">0</span>
+                                        </button>
+                                        <button type="button" class="btn btn-dark-outline me-2" id="btnFiltrarDeudores" data-filtro="deudores">
+                                            Clientes Deudores <span class="badge text-bg-light" id="badgeDeudores">0</span>
+                                        </button>
+                                        <button type="button" class="btn btn-dark-outline" id="btnFiltrarSinDeuda" data-filtro="sin-deuda">
+                                            Clientes Sin Deuda <span class="badge text-bg-light" id="badgeSinDeuda">0</span>
+                                        </button>
+                                    </div>
+                                    <div class="col-md-4 text-end">
+                                        <button type="button" class="btn btn-secondary" id="btnExportarPdf">
+                                            <i class="fas fa-file-pdf me-1"></i> Exportar Deudores (PDF)
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-table me-1"></i>
+                                Listado de Clientes
+                            </div>
+                            <div class="card-body">
+                                <div id="loading-spinner" class="d-flex justify-content-center align-items-center" style="height: 200px;">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Cargando...</span>
+                                    </div>
+                                </div>
+                                <div id="tablaClientesContainer" class="d-none">
+                                    <table id="tablaClientes" class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Nro. Cliente</th>
+                                                <th>Nombre</th>
+                                                <th>Apellido</th>
+                                                <th>Estado</th>
+                                                <th>Compras</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="bodyTablaClientes">
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <nav aria-label="Paginación de Clientes">
+                                    <ul class="pagination justify-content-center" id="paginacion-clientes">
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+                <footer class="py-4 bg-light mt-auto">
+                    <div class="container-fluid px-4">
+                        <div class="d-flex align-items-center justify-content-between small">
+                            <div class="text-muted">&copy;Distribuidora Hasta el Hueso</div>
+                            <div>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalDetallesVenta" tabindex="-1" aria-labelledby="modalDetallesVentaLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalDetallesVentaLabel">Detalles de Ventas del Cliente: <span id="nombreClienteModal"></span></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="contenidoModalVentas">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID Venta</th>
+                                        <th>Fecha</th>
+                                        <th>Total</th>
+                                        <th>Saldo Pendiente</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bodyTablaVentasCliente">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+<div class="modal fade" id="modalPagoVenta" tabindex="-1" aria-labelledby="modalPagoVentaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalPagoVentaLabel">Registrar Pago</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formRegistrarPago">
+                    <div class="mb-3">
+                        <label for="pagoIdVenta" class="form-label">ID Venta</label>
+                        <p id="pagoIdVenta" class="form-control-plaintext"></p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="pagoTotalVenta" class="form-label">Total de la Venta</label>
+                        <p id="pagoTotalVenta" class="form-control-plaintext"></p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="pagoSaldoPendiente" class="form-label">Saldo Pendiente</label>
+                        <p id="pagoSaldoPendiente" class="form-control-plaintext"></p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputMontoPagar" class="form-label">Monto a Pagar</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control" id="inputMontoPagar" step="0.01" min="0" required>
+                            <button type="button" class="btn btn-primary" id="btnPagarMontoCompleto">Pagar Saldo Completo</button>
+                        </div>
+                    </div>
+                    <div id="alertPagoSuccess" class="alert alert-success d-none" role="alert">
+                        Pago registrado exitosamente.
+                    </div>
+                    <div id="alertPagoError" class="alert alert-danger d-none" role="alert">
+                        Error al registrar el pago.
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="submit" form="formRegistrarPago" class="btn btn-primary">Registrar Pago</button>
+            </div>
+        </div>
+    </div>
+</div>
+        
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="js/scripts.js"></script>
+    <script src="js/pagos_deudores/pagos.js"></script>
+    <script src="js/pagos_deudores/scriptsPagina.js"></script>
+
+    </body>
+</html>
+
+
