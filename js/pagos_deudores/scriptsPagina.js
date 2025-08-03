@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnFiltrarTodos = document.getElementById('btnFiltrarTodos');
     const btnFiltrarDeudores = document.getElementById('btnFiltrarDeudores');
     const btnFiltrarSinDeuda = document.getElementById('btnFiltrarSinDeuda');
-    const btnExportarPdf = document.getElementById('btnExportarPdf');
     const badgeTodos = document.getElementById('badgeTodos');
     const badgeDeudores = document.getElementById('badgeDeudores');
     const badgeSinDeuda = document.getElementById('badgeSinDeuda');
@@ -49,9 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const botonesFiltro = document.querySelectorAll('[data-filtro]');
         botonesFiltro.forEach(boton => {
             boton.addEventListener('click', function() {
-                // Eliminar la clase 'active' de todos los botones
                 botonesFiltro.forEach(b => b.classList.remove('active'));
-                // Agregar la clase 'active' solo al botón clickeado
                 this.classList.add('active');
 
                 const filtro = this.dataset.filtro;
@@ -85,10 +82,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 const idVenta = e.target.dataset.idventa;
                 const totalVenta = parseFloat(e.target.dataset.total);
                 const saldoPendiente = parseFloat(e.target.dataset.saldopendiente);
+                const idCliente = e.target.dataset.idcliente;
                 
-                // Llamada a la función global de pagos.js
                 if (window.abrirModalDePago) {
-                    window.abrirModalDePago(idVenta, totalVenta, saldoPendiente);
+                    window.abrirModalDePago(idVenta, totalVenta, saldoPendiente, idCliente);
                 } else {
                     console.error("La función abrirModalDePago no está disponible. Asegúrese de que pagos.js está cargado.");
                 }
@@ -143,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function() {
         clientes.forEach(cliente => {
             const row = document.createElement('tr');
             const estadoDeuda = cliente.estado === 'con-deuda' ? 'deuda-con-deuda' : 'deuda-al-dia';
-            const estadoTexto = cliente.estado === 'con-deuda' ? 'Con Deuda' : 'Al día';
+            const estadoTexto = cliente.estado === 'con-deuda' ? 'Con Deuda' : 'Sin Deuda';
             
             row.innerHTML = `
                 <td>${cliente.idCliente}</td>
@@ -164,27 +161,25 @@ document.addEventListener('DOMContentLoaded', function() {
         if (badgeSinDeuda) badgeSinDeuda.textContent = clientesSinDeuda.length;
     }
 
-   async function cargarVentasPorCliente(idCliente, nombreCliente) {
+    async function cargarVentasPorCliente(idCliente) {
         const token = getToken();
         if (!token) { handleSessionExpired(); return; }
         if (!bodyTablaVentasCliente) return;
 
-        bodyTablaVentasCliente.innerHTML = '<tr><td colspan="6" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></td></tr>';
+        // Se ajusta el colspan a 7
+        bodyTablaVentasCliente.innerHTML = '<tr><td colspan="7" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></td></tr>';
 
         try {
             const response = await fetch(`${API_VENTAS_CLIENTE_URL}/${idCliente}`, {
                 method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+                headers: { 'Authorization': `Bearer ${token}` }
             });
 
-            // Agregado para diagnosticar el problema de JSON
             const responseText = await response.text();
-            console.log('Respuesta cruda del servidor:', responseText);
 
             if (response.status === 204) {
-                bodyTablaVentasCliente.innerHTML = '<tr><td colspan="6" class="text-center">El cliente no tiene ventas registradas.</td></tr>';
+                // Se ajusta el colspan a 7
+                bodyTablaVentasCliente.innerHTML = '<tr><td colspan="7" class="text-center">El cliente no tiene ventas registradas.</td></tr>';
                 modalDetallesVenta.show();
                 return;
             }
@@ -193,44 +188,60 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error(`Error ${response.status}: ${responseText}`);
             }
 
-            // Intenta parsear el texto de la respuesta como JSON
             const ventas = JSON.parse(responseText);
-            
-            // Si llega a este punto, significa que el JSON se parseó correctamente
             renderizarVentasCliente(ventas, idCliente);
             modalDetallesVenta.show();
 
         } catch (error) {
             console.error('Error al cargar las ventas del cliente:', error);
-            bodyTablaVentasCliente.innerHTML = '<tr><td colspan="6" class="text-center text-danger">Error al cargar las ventas.</td></tr>';
+            bodyTablaVentasCliente.innerHTML = '<tr><td colspan="7" class="text-center text-danger">Error al cargar las ventas.</td></tr>';
         }
     }
 
-    function renderizarVentasCliente(ventas, idCliente) {
- if (!bodyTablaVentasCliente) return;
+function renderizarVentasCliente(ventas, idCliente) {
+    if (!bodyTablaVentasCliente) return;
     bodyTablaVentasCliente.innerHTML = '';
     if (ventas.length === 0) {
-        bodyTablaVentasCliente.innerHTML = '<tr><td colspan="6" class="text-center">El cliente no tiene ventas registradas.</td></tr>';
+        bodyTablaVentasCliente.innerHTML = '<tr><td colspan="7" class="text-center">El cliente no tiene ventas registradas.</td></tr>';
         return;
     }
     ventas.forEach(venta => {
-        // CORREGIDO: Calcula el total pagado a partir del total y el saldo
-        const totalPagado = venta.total - venta.saldoPendiente;
-        const estadoVenta = venta.saldoPendiente <= 0 ? 'Pagado' : 'Pendiente';
+        const estadoVenta = venta.saldoPendiente <= 0 ? 'Sin Deuda' : 'Con Deuda';
         const estadoClase = venta.saldoPendiente <= 0 ? 'deuda-al-dia' : 'deuda-con-deuda';
+
+        // --- Lógica del botón de Pagar ---
+        // 1. Verificamos si el saldo pendiente es mayor a 0.
+        const isDeudor = venta.saldoPendiente > 0;
+        
+        // 2. Asignamos clases CSS según el estado de la deuda.
+        //    'btn-success' para un botón activo (verde).
+        //    'btn-secondary' para un botón deshabilitado visualmente (gris).
+        const btnClass = isDeudor ? 'btn-success btn-pagar-venta' : 'btn-secondary';
+        
+        // 3. Agregamos el atributo 'disabled' si no hay deuda. Esto lo desactiva.
+        const btnDisabled = isDeudor ? '' : 'disabled';
+        // --- Fin de la lógica del botón ---
 
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${venta.idVenta}</td>
             <td>${venta.fecha}</td>
             <td>$${venta.total.toFixed(2)}</td>
-            <td>$${totalPagado.toFixed(2)}</td> <td>$${venta.saldoPendiente.toFixed(2)}</td>
+            <td>$${venta.totalPagado.toFixed(2)}</td>
+            <td>$${venta.saldoPendiente.toFixed(2)}</td>
             <td><span class="${estadoClase}">${estadoVenta}</span></td>
             <td>
-                ${venta.saldoPendiente > 0 ? `<button type="button" class="btn btn-sm btn-success btn-pagar-venta" data-idventa="${venta.idVenta}" data-total="${venta.total}" data-saldopendiente="${venta.saldoPendiente}" data-idcliente="${idCliente}">Pagar</button>` : 'N/A'}
+                <button type="button" class="btn btn-sm ${btnClass}" 
+                        data-idventa="${venta.idVenta}" 
+                        data-total="${venta.total}" 
+                        data-saldopendiente="${venta.saldoPendiente}" 
+                        data-idcliente="${idCliente}" 
+                        ${btnDisabled}>
+                    Pagar
+                </button>
             </td>
         `;
-            bodyTablaVentasCliente.appendChild(row);
-        });
+        bodyTablaVentasCliente.appendChild(row);
+    });
     }
 });
