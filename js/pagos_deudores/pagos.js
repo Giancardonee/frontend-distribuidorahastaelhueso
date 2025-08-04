@@ -14,10 +14,16 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentIdCliente = null;
 
     const API_PAGOS_URL = "http://localhost:8080/distribuidora/pagos/registrar";
-    // URL corregida para el nuevo endpoint en tu UsuarioController
     const API_USUARIOS_URL = "http://localhost:8080/distribuidora/usuarios/id";
 
-    // Función para decodificar el JWT y obtener el payload
+    // FUNCION PARA FORMATO DE MONEDA CON SÍMBOLO $ AL PRINCIPIO
+    function formatCurrency(number) {
+        return new Intl.NumberFormat('es-AR', { 
+            style: 'currency', 
+            currency: 'ARS',
+        }).format(number);
+    }
+
     function parseJwt(token) {
         try {
             const base64Url = token.split('.')[1];
@@ -31,7 +37,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Nueva función para obtener el ID del usuario del backend
     async function getUserIdByUsername(username, token) {
         try {
             const response = await fetch(`${API_USUARIOS_URL}?username=${username}`, {
@@ -63,8 +68,8 @@ document.addEventListener('DOMContentLoaded', function() {
         currentIdCliente = idCliente;
 
         if (pagoIdVenta) pagoIdVenta.textContent = idVenta;
-        if (pagoTotalVenta) pagoTotalVenta.textContent = `$${totalVenta.toFixed(2)}`;
-        if (pagoSaldoPendiente) pagoSaldoPendiente.textContent = `$${saldoPendiente.toFixed(2)}`;
+        if (pagoTotalVenta) pagoTotalVenta.textContent = formatCurrency(totalVenta);
+        if (pagoSaldoPendiente) pagoSaldoPendiente.textContent = formatCurrency(saldoPendiente);
         if (inputMontoPagar) {
             inputMontoPagar.value = '';
             inputMontoPagar.max = saldoPendiente.toFixed(2);
@@ -79,7 +84,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (btnPagarMontoCompleto) {
         btnPagarMontoCompleto.addEventListener('click', function() {
             if (pagoSaldoPendiente && inputMontoPagar) {
-                const saldoPendiente = parseFloat(pagoSaldoPendiente.textContent.replace('$', ''));
+                const saldoPendienteTexto = pagoSaldoPendiente.textContent;
+                const saldoPendiente = parseFloat(saldoPendienteTexto.replace('$', '').replace(/\./g, '').replace(',', '.'));
                 if (!isNaN(saldoPendiente)) {
                     inputMontoPagar.value = saldoPendiente.toFixed(2);
                 }
@@ -92,7 +98,8 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
 
             const montoPagado = parseFloat(inputMontoPagar.value);
-            const saldoPendiente = parseFloat(pagoSaldoPendiente.textContent.replace('$', ''));
+            const saldoPendienteTexto = pagoSaldoPendiente.textContent;
+            const saldoPendiente = parseFloat(saldoPendienteTexto.replace('$', '').replace(/\./g, '').replace(',', '.'));
 
             if (montoPagado <= 0 || montoPagado > saldoPendiente) {
                 alert('El monto ingresado no es válido. Debe ser mayor a 0 y no exceder el saldo pendiente.');
@@ -105,7 +112,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            // 1. Obtener el nombre de usuario del token
             const payload = parseJwt(token);
             if (!payload || !payload.sub) {
                 console.error('No se pudo obtener el nombre de usuario del token.');
@@ -114,7 +120,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             const username = payload.sub;
             
-            // 2. Hacer la llamada al nuevo endpoint para obtener el ID
             const idUsuarioQueRegistra = await getUserIdByUsername(username, token);
             
             if (!idUsuarioQueRegistra) {
@@ -122,7 +127,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            // 3. Con el ID del usuario, registrar el pago
             const pagoData = {
                 idVenta: currentIdVenta,
                 montoPagado: montoPagado,
@@ -146,10 +150,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (alertPagoSuccess) alertPagoSuccess.classList.remove('d-none');
                 if (alertPagoError) alertPagoError.classList.add('d-none');
 
-                // --- CAMBIO AQUI: Recarga la página completa ---
                 setTimeout(() => {
                     window.location.reload();
-                }, 1000); // Espera 1 segundo antes de recargar para que el usuario vea el mensaje de éxito
+                }, 1000); 
 
             } catch (error) {
                 console.error('Error al registrar el pago:', error);
@@ -159,11 +162,3 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-
-
-             //   setTimeout(() => {
-             //       modalPagoVenta.hide();
-             //       if (window.cargarVentasPorCliente && currentIdCliente) {
-             //           window.cargarVentasPorCliente(currentIdCliente);
-             //       }
-             //   }, 2000

@@ -23,6 +23,14 @@ document.addEventListener('DOMContentLoaded', function() {
     let clientesSinDeuda = [];
     let clientesFiltrados = [];
 
+    // FUNCION PARA FORMATO DE MONEDA CON SÍMBOLO $ AL PRINCIPIO
+    function formatCurrency(number) {
+        return new Intl.NumberFormat('es-AR', { 
+            style: 'currency', 
+            currency: 'ARS',
+        }).format(number);
+    }
+
     function getToken() {
         return localStorage.getItem('jwtToken');
     }
@@ -44,7 +52,6 @@ document.addEventListener('DOMContentLoaded', function() {
             renderizarTablaClientes(clientesFiltrados);
         });
 
-        // Event listener para los botones de filtro
         const botonesFiltro = document.querySelectorAll('[data-filtro]');
         botonesFiltro.forEach(boton => {
             boton.addEventListener('click', function() {
@@ -166,7 +173,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!token) { handleSessionExpired(); return; }
         if (!bodyTablaVentasCliente) return;
 
-        // Se ajusta el colspan a 7
         bodyTablaVentasCliente.innerHTML = '<tr><td colspan="7" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></td></tr>';
 
         try {
@@ -178,7 +184,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const responseText = await response.text();
 
             if (response.status === 204) {
-                // Se ajusta el colspan a 7
                 bodyTablaVentasCliente.innerHTML = '<tr><td colspan="7" class="text-center">El cliente no tiene ventas registradas.</td></tr>';
                 modalDetallesVenta.show();
                 return;
@@ -198,50 +203,41 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-function renderizarVentasCliente(ventas, idCliente) {
-    if (!bodyTablaVentasCliente) return;
-    bodyTablaVentasCliente.innerHTML = '';
-    if (ventas.length === 0) {
-        bodyTablaVentasCliente.innerHTML = '<tr><td colspan="7" class="text-center">El cliente no tiene ventas registradas.</td></tr>';
-        return;
-    }
-    ventas.forEach(venta => {
-        const estadoVenta = venta.saldoPendiente <= 0 ? 'Sin Deuda' : 'Con Deuda';
-        const estadoClase = venta.saldoPendiente <= 0 ? 'deuda-al-dia' : 'deuda-con-deuda';
+    function renderizarVentasCliente(ventas, idCliente) {
+        if (!bodyTablaVentasCliente) return;
+        bodyTablaVentasCliente.innerHTML = '';
+        if (ventas.length === 0) {
+            bodyTablaVentasCliente.innerHTML = '<tr><td colspan="7" class="text-center">El cliente no tiene ventas registradas.</td></tr>';
+            return;
+        }  
+        ventas.forEach(venta => {
+            const estadoVenta = venta.saldoPendiente <= 0 ? 'Sin Deuda' : 'Con Deuda';
+            const estadoClase = venta.saldoPendiente <= 0 ? 'deuda-al-dia' : 'deuda-con-deuda';
 
-        // --- Lógica del botón de Pagar ---
-        // 1. Verificamos si el saldo pendiente es mayor a 0.
-        const isDeudor = venta.saldoPendiente > 0;
-        
-        // 2. Asignamos clases CSS según el estado de la deuda.
-        //    'btn-success' para un botón activo (verde).
-        //    'btn-secondary' para un botón deshabilitado visualmente (gris).
-        const btnClass = isDeudor ? 'btn-success btn-pagar-venta' : 'btn-secondary';
-        
-        // 3. Agregamos el atributo 'disabled' si no hay deuda. Esto lo desactiva.
-        const btnDisabled = isDeudor ? '' : 'disabled';
-        // --- Fin de la lógica del botón ---
+            const isDeudor = venta.saldoPendiente > 0;
+            const btnClass = isDeudor ? 'btn-success btn-pagar-venta' : 'btn-secondary';
+            const btnDisabled = isDeudor ? '' : 'disabled';
 
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${venta.idVenta}</td>
-            <td>${venta.fecha}</td>
-            <td>$${venta.total.toFixed(2)}</td>
-            <td>$${venta.totalPagado.toFixed(2)}</td>
-            <td>$${venta.saldoPendiente.toFixed(2)}</td>
-            <td><span class="${estadoClase}">${estadoVenta}</span></td>
-            <td>
-                <button type="button" class="btn btn-sm ${btnClass}" 
-                        data-idventa="${venta.idVenta}" 
-                        data-total="${venta.total}" 
-                        data-saldopendiente="${venta.saldoPendiente}" 
-                        data-idcliente="${idCliente}" 
-                        ${btnDisabled}>
-                    Pagar
-                </button>
-            </td>
-        `;
-        bodyTablaVentasCliente.appendChild(row);
-    });
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${venta.idVenta}</td>
+                <td>${venta.fecha}</td>
+                <td>${formatCurrency(venta.total)}</td>
+                <td>${formatCurrency(venta.totalPagado)}</td>
+                <td>${formatCurrency(venta.saldoPendiente)}</td>
+                <td><span class="${estadoClase}">${estadoVenta}</span></td>
+                <td>
+                    <button type="button" class="btn btn-sm ${btnClass}" 
+                            data-idventa="${venta.idVenta}" 
+                            data-total="${venta.total}" 
+                            data-saldopendiente="${venta.saldoPendiente}" 
+                            data-idcliente="${idCliente}" 
+                            ${btnDisabled}>
+                        Pagar
+                    </button>
+                </td>
+            `;
+            bodyTablaVentasCliente.appendChild(row);
+        });
     }
 });
