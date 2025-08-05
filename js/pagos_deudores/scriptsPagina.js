@@ -233,7 +233,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             data-saldopendiente="${venta.saldoPendiente}" 
                             data-idcliente="${idCliente}" 
                             ${btnDisabled}>
-                        Pagar
+                        Saldar Deuda
                     </button>
                 </td>
             `;
