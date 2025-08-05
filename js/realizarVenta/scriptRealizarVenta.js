@@ -925,18 +925,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // REMOVIDO: Lógica de descuento global
-        // const descuentoValue = parseFloat(inputDescuento.value) || 0;
-        // if (descuentoValue < 0) {
-        //     showToast("El descuento no puede ser un valor negativo.", 'error');
-        //     return;
-        // }
-
         const ventaDTO = {
             fecha: new Date().toISOString().slice(0, 10),
             idCliente: selectedClientId,
             idUsuario: authenticatedUserId,
-            // REMOVIDO: descuento: descuentoValue,
             detalles: ventaItems
         };
 
@@ -947,9 +939,11 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("Resultado de createSale:", newSale);
 
             if (newSale && newSale.idVenta) {
-                showToast("Venta registrada exitosamente. ID: " + newSale.idVenta, 'success');
-                resetRegisterSaleForm();
-                showSaleDetailsInModal(newSale.idVenta);
+            //Llamamos a la función para registrar el envío con el ID de la venta creada.
+            await registrarEnvio(newSale.idVenta);
+            showToast("Venta y envío registrados exitosamente. ID de Venta: " + newSale.idVenta, 'success');
+            resetRegisterSaleForm();
+            showSaleDetailsInModal(newSale.idVenta);
             } else {
                 showToast("Error al registrar la venta o no se obtuvo el ID de la venta.", 'danger');
             }

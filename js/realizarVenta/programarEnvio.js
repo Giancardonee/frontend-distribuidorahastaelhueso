@@ -1,3 +1,5 @@
+// js/realizarVenta/programarEnvio.js
+
 document.addEventListener('DOMContentLoaded', () => {
     const selectOpcionEnvio = document.getElementById('selectOpcionEnvio');
     const modalSeleccionarFecha = new bootstrap.Modal(document.getElementById('modalSeleccionarFecha'));
@@ -5,107 +7,208 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnConfirmarFecha = document.getElementById('btnConfirmarFecha');
     const fechaEntregaSeleccionadaContainer = document.getElementById('fechaEntregaSeleccionadaContainer');
     const fechaEntregaSeleccionadaSpan = document.getElementById('fechaEntregaSeleccionada');
+    const modalTitle = document.getElementById('modalSeleccionarFechaLabel');
 
     let fechaSeleccionada = null;
-    let fechaHoy = new Date();
-    
-    // Simulación de datos estáticos de envíos por día (esto lo reemplazaríamos por el back)
-    const enviosEstaticos = {
-        '2025-08-05': 3,
-        '2025-08-06': 5,
-        '2025-08-07': 1,
-        '2025-08-08': 0
-    };
+    let modoCalendario = '';
 
-    // Evento para el select de opciones de envío
+    // Mapa para guardar los envíos por fecha obtenidos del backend.
+    let enviosPorDiaDelBackend = {};
+
     selectOpcionEnvio.addEventListener('change', (e) => {
-        if (e.target.value === 'seleccionar_fecha') {
-            generarCalendarioSemanal();
+        const opcion = e.target.value;
+        fechaSeleccionada = null;
+        fechaEntregaSeleccionadaContainer.style.display = 'none';
+        btnConfirmarFecha.disabled = true;
+
+        if (opcion === 'seleccionar_fecha') {
+            modoCalendario = 'futuro';
+            modalTitle.textContent = 'Seleccionar fecha de entrega';
+            generarCalendario(modoCalendario);
             modalSeleccionarFecha.show();
-        } else {
-            // Si no se selecciona una fecha, reseteamos la visualización
+        } else if (opcion === 'ya_entregado') {
+            modoCalendario = 'pasado';
+            modalTitle.textContent = 'Seleccionar fecha de entrega realizada';
+            generarCalendario(modoCalendario);
+            modalSeleccionarFecha.show();
+        } else if (opcion === 'programar_mas_tarde') {
             fechaSeleccionada = null;
-            fechaEntregaSeleccionadaContainer.style.display = 'none';
         }
     });
 
-    // Función para generar el calendario semanal de forma dinámica
-    function generarCalendarioSemanal() {
+    // NUEVA FUNCIÓN: Obtiene los envíos del backend
+    async function fetchEnviosPorFecha(modo) {
+        const hoy = new Date();
+        const diasAMostrar = 10;
+        let fechaInicio = new Date(hoy);
+        let fechaFin = new Date(hoy);
+
+        if (modo === 'pasado') {
+            fechaInicio.setDate(hoy.getDate() - (diasAMostrar - 1));
+        } else if (modo === 'futuro') {
+            fechaFin.setDate(hoy.getDate() + (diasAMostrar - 1));
+        }
+
+        const fechaInicioStr = fechaInicio.toISOString().split('T')[0];
+        const fechaFinStr = fechaFin.toISOString().split('T')[0];
+        
+        const jwtToken = localStorage.getItem('jwtToken');
+        if (!jwtToken) {
+            console.error('No se encontró el token JWT. No se pueden cargar los envíos.');
+            return;
+        }
+
+        const baseUrl = 'http://localhost:8080/distribuidora';
+        const url = `${baseUrl}/envios/cantidad-por-fecha?fechaInicio=${fechaInicioStr}&fechaFin=${fechaFinStr}`;
+
+        try {
+            const response = await fetch(url, {
+                headers: { 'Authorization': `Bearer ${jwtToken}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                // Rellenamos el mapa con los datos del backend
+                enviosPorDiaDelBackend = data.reduce((map, item) => {
+                    map[item.fecha] = item.cantidad;
+                    return map;
+                }, {});
+            } else {
+                console.error('Error al obtener la cantidad de envíos por fecha:', response.status);
+            }
+        } catch (error) {
+            console.error('Error de red al obtener los envíos:', error);
+        }
+    }
+
+    async function generarCalendario(modo) {
         calendarioEnvios.innerHTML = '';
-        let hoy = new Date();
-        // Encuentra el primer día de la semana (por ejemplo, el lunes)
-        let diaDeSemana = hoy.getDay(); // 0 = Domingo, 1 = Lunes
-        let primerDiaSemana = new Date(hoy.setDate(hoy.getDate() - (diaDeSemana === 0 ? 6 : diaDeSemana - 1)));
+        await fetchEnviosPorFecha(modo); // Esperamos a que el backend devuelva los datos
 
-        for (let i = 0; i < 7; i++) {
-            let dia = new Date(primerDiaSemana);
-            dia.setDate(primerDiaSemana.getDate() + i);
+        const hoy = new Date();
+        const diasAMostrar = 10;
+        let fechaInicio = new Date(hoy);
 
-            // Formatear la fecha para la clave del objeto y la visualización
+        if (modo === 'pasado') {
+            fechaInicio.setDate(hoy.getDate() - (diasAMostrar - 1));
+        }
+
+        for (let i = 0; i < diasAMostrar; i++) {
+            const dia = new Date(fechaInicio);
+            dia.setDate(fechaInicio.getDate() + i);
+
             const fechaKey = dia.toISOString().split('T')[0];
             const diaDeLaSemana = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'][dia.getDay()];
             const diaDelMes = dia.getDate();
-            const numEnvios = enviosEstaticos[fechaKey] || 0;
+            
+            // Usamos los datos del backend, si no existen usamos 0
+            const numEnvios = enviosPorDiaDelBackend[fechaKey] || 0;
 
             const diaElemento = document.createElement('div');
             diaElemento.classList.add('col-12', 'col-md-auto', 'text-center', 'py-3', 'dia-envio', 'position-relative');
             diaElemento.dataset.fecha = fechaKey;
 
-            if (dia.setHours(0,0,0,0) < fechaHoy.setHours(0,0,0,0)) {
-                diaElemento.classList.add('text-muted');
-                diaElemento.style.cursor = 'not-allowed';
+            const hoySinTiempo = new Date();
+            hoySinTiempo.setHours(0, 0, 0, 0);
+            if (dia.setHours(0, 0, 0, 0) === hoySinTiempo.setHours(0, 0, 0, 0)) {
+                diaElemento.classList.add('bg-light');
             }
 
-            if (fechaKey === fechaSeleccionada) {
-                diaElemento.classList.add('selected');
-                btnConfirmarFecha.disabled = false;
-            }
-
-            diaElemento.innerHTML = `
-                <div class="fw-bold">${diaDeLaSemana}</div>
-                <div>${diaDelMes}</div>
-                <span class="badge rounded-pill bg-info badge-envios" title="Envíos programados">${numEnvios}</span>
+            const cardContent = `
+                <p class="mb-0 fw-bold">${diaDeLaSemana}</p>
+                <h4 class="mb-0">${diaDelMes}</h4>
+                <div class="badge bg-primary rounded-pill mt-2">${numEnvios} envíos</div>
             `;
+            diaElemento.innerHTML = cardContent;
 
             diaElemento.addEventListener('click', () => {
-                if (dia.setHours(0,0,0,0) >= fechaHoy.setHours(0,0,0,0)) {
-                    document.querySelectorAll('.dia-envio').forEach(el => el.classList.remove('selected'));
-                    diaElemento.classList.add('selected');
-                    fechaSeleccionada = diaElemento.dataset.fecha;
-                    btnConfirmarFecha.disabled = false;
-                }
+                document.querySelectorAll('.dia-envio.border.border-primary').forEach(el => {
+                    el.classList.remove('border', 'border-primary', 'shadow');
+                });
+
+                diaElemento.classList.add('border', 'border-primary', 'shadow');
+                fechaSeleccionada = diaElemento.dataset.fecha;
+                btnConfirmarFecha.disabled = false;
             });
 
             calendarioEnvios.appendChild(diaElemento);
         }
     }
 
-    // Evento para confirmar la fecha del modal
     btnConfirmarFecha.addEventListener('click', () => {
         if (fechaSeleccionada) {
-            fechaEntregaSeleccionadaSpan.textContent = new Date(fechaSeleccionada + 'T00:00:00').toLocaleDateString();
+            fechaEntregaSeleccionadaSpan.textContent = fechaSeleccionada;
             fechaEntregaSeleccionadaContainer.style.display = 'block';
             modalSeleccionarFecha.hide();
         }
     });
-
-    // Validar el formulario al enviar (requiere una opción de envío)
-    document.querySelector('form').addEventListener('submit', (e) => {
-        if (selectOpcionEnvio.value === '') {
-            e.preventDefault();
-            selectOpcionEnvio.classList.add('is-invalid');
-        } else {
-            selectOpcionEnvio.classList.remove('is-invalid');
-            // Aquí iría la lógica para enviar la venta, incluyendo la opción de envío y la fecha seleccionada
-            console.log('Opción de envío seleccionada:', selectOpcionEnvio.value);
-            if (selectOpcionEnvio.value === 'seleccionar_fecha' && fechaSeleccionada) {
-                console.log('Fecha de entrega:', fechaSeleccionada);
-            }
-            if (selectOpcionEnvio.value === 'ya_entregado') {
-                 console.log('La fecha de entrega es hoy:', fechaHoy.toISOString().split('T')[0]);
-            }
-            // Por ahora, solo evitamos el envío para fines de demostración
-            e.preventDefault(); 
-        }
-    });
 });
+
+// FUNCIÓN PÚBLICA PARA LLAMAR DESDE EL OTRO SCRIPT
+async function registrarEnvio(idVenta) {
+    const selectOpcionEnvio = document.getElementById('selectOpcionEnvio');
+    const fechaEntregaSeleccionadaSpan = document.getElementById('fechaEntregaSeleccionada');
+    const opcionEnvioSeleccionada = selectOpcionEnvio.value;
+
+    let estadoEnvio = '';
+    let fechaParaEnvio = null;
+
+    if (opcionEnvioSeleccionada === 'programar_mas_tarde') {
+        estadoEnvio = 'SIN_FECHA';
+    } else if (opcionEnvioSeleccionada === 'ya_entregado' || opcionEnvioSeleccionada === 'seleccionar_fecha') {
+        if (!fechaEntregaSeleccionadaSpan.textContent) {
+            console.error('No se ha seleccionado una fecha de entrega.');
+            alert('Error: Debe seleccionar una fecha de entrega.');
+            return;
+        }
+        estadoEnvio = (opcionEnvioSeleccionada === 'ya_entregado') ? 'ENTREGADO' : 'PENDIENTE';
+        fechaParaEnvio = fechaEntregaSeleccionadaSpan.textContent;
+    }
+    
+    const jwtToken = localStorage.getItem('jwtToken');
+    if (!jwtToken) {
+        console.error('No se encontró el token JWT.');
+        alert('Sesión expirada. Por favor, vuelva a iniciar sesión.');
+        window.location.href = 'login.html';
+        return;
+    }
+
+    const envioDTO = {
+        idVenta: idVenta,
+        estado: estadoEnvio,
+        fechaEntrega: fechaParaEnvio
+    };
+    
+    try {
+        const baseUrl = 'http://localhost:8080/distribuidora';
+        const response = await fetch(`${baseUrl}/envios/programar`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${jwtToken}`
+            },
+            body: JSON.stringify(envioDTO)
+        });
+
+        if (response.ok) {
+            const nuevoEnvio = await response.json();
+            console.log('Envío registrado con éxito:', nuevoEnvio);
+
+            // 1. Reinicia el select a la opción por defecto.
+            selectOpcionEnvio.value = 'programar_mas_tarde'; 
+
+            // 2. Limpia el contenido del <span> que contiene la fecha seleccionada.
+            fechaEntregaSeleccionadaSpan.textContent = ''; 
+            
+            // 3. Oculta el contenedor completo para que no se vea el fondo ni el borde.
+            fechaEntregaSeleccionadaContainer.style.display = 'none';
+
+        } else {
+            const errorData = await response.json();
+            console.error('Error al registrar el envío:', errorData.message);
+            alert('Error al registrar el envío: ' + errorData.message);
+        }
+    } catch (error) {
+        console.error('Error de red al registrar el envío:', error);
+        alert('Error de conexión al registrar el envío.');
+    }
+}

@@ -137,7 +137,32 @@
                                     <h4>Total: <span id="ventaTotalVenta">$0.00</span></h4>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary rounded-md mt-3">Registrar Venta</button>
+                                <button type="submit" class="btn btn-primary rounded-md mt-3 mb-4">Registrar Venta</button>
+
+                                        <div class="card mb-4">
+                                    <div class="card-header bg-primary text-white">
+                                        <i class="fas fa-truck me-1"></i>
+                                        Registro de Envío
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="selectOpcionEnvio" class="form-label fw-bold">Opciones de Envío:</label>
+                                                <select class="form-select" id="selectOpcionEnvio" aria-label="Seleccionar opción de envío" required>
+                                                    <option value="" selected disabled>Seleccione una opción...</option>
+                                                    <option value="programar_mas_tarde">Programar entrega luego</option>
+                                                    <option value="ya_entregado">Entrega realizada</option>
+                                                    <option value="seleccionar_fecha">Seleccionar fecha de entrega</option>
+                                                </select>
+                                            <div class="invalid-feedback">
+                                                Por favor, seleccione una opción de envío.
+                                            </div>
+                                        </div>
+                                        <div id="fechaEntregaSeleccionadaContainer" class="mt-3" style="display: none;">
+                                            <p class="fw-bold mb-1">Fecha de entrega:</p>
+                                            <span id="fechaEntregaSeleccionada" class="badge bg-secondary p-2"></span>
+                                        </div>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -306,6 +331,48 @@
         </div>
     </div>
 
+
+        <div class="modal fade" id="modalSeleccionarFecha" tabindex="-1" aria-labelledby="modalSeleccionarFechaLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="modalSeleccionarFechaLabel">Seleccionar Fecha de Entrega</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="calendarioEnvios" class="row">
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" id="btnConfirmarFecha" disabled>Confirmar Fecha</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .dia-envio {
+                cursor: pointer;
+                transition: background-color 0.2s, color 0.2s;
+                border: 1px solid #dee2e6;
+                border-radius: 0.25rem;
+            }
+            .dia-envio:hover {
+                background-color: #e9ecef;
+            }
+            .dia-envio.selected {
+                background-color: #0d6efd;
+                color: #fff;
+            }
+            .badge-envios {
+                position: absolute;
+                top: 0;
+                right: 0;
+                font-size: 0.75rem;
+            }
+        </style>
+
     <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
@@ -313,6 +380,7 @@
     <script src="js/generic/cargarUsuarioEnFooter.js"></script>
     <script src="js/logout.js"></script>
     <script src="js/realizarVenta/scriptRealizarVenta.js"></script>
-    
+    <script src="js/realizarVenta/programarEnvio.js"></script>
+
 </body>
 </html>
