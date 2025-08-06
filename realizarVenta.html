@@ -279,6 +279,7 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary rounded-md" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-info rounded-md text-white" id="btnRegistrarPago" data-bs-toggle="modal" data-bs-target="#modalRegistrarPago">Registrar Pago</button>
             <button type="button" class="btn btn-primary rounded-md" id="btnDescargarComprobante">Descargar Comprobante</button>
         </div>
     </div>
@@ -373,6 +374,40 @@
             }
         </style>
 
+
+<!-- INICIO: AGREGAR EL NUEVO MODAL DE REGISTRO DE PAGO AQUÍ -->
+    <div class="modal fade" id="modalRegistrarPago" tabindex="-1" aria-labelledby="modalRegistrarPagoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalRegistrarPagoLabel">Registrar Pago</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formRegistrarPago">
+                        <div class="mb-3">
+                            <p class="fw-bold">Total de la Venta: <span id="pagoTotalVenta" class="text-primary"></span></p>
+                        </div>
+                        <div class="mb-3">
+                            <label for="inputMontoPagado" class="form-label">Monto Pagado:</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" step="0.01" min="0.01" class="form-control rounded-md" id="inputMontoPagado" required>
+                                <button type="button" class="btn btn-outline-primary rounded-md" id="btnPagoCompleto">Pagar Completo</button>
+                            </div>
+                            <div class="invalid-feedback">Por favor, ingrese un monto válido.</div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary rounded-md" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-success rounded-md" id="btnConfirmarPago">Registrar Pago</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
@@ -381,6 +416,6 @@
     <script src="js/logout.js"></script>
     <script src="js/realizarVenta/scriptRealizarVenta.js"></script>
     <script src="js/realizarVenta/programarEnvio.js"></script>
-
+    <script src="js/realizarVenta/scriptRegistrarPago.js"></script>
 </body>
 </html>
