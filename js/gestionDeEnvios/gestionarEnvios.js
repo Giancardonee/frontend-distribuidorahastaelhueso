@@ -83,7 +83,7 @@ window.cargarEnvios = async function() {
 window.cargarEnviosFiltrados = function() {
     const filtroEstado = document.getElementById('filtroEstado').value.toUpperCase();
     const filtroCliente = document.getElementById('filtroClienteQuery').value.toLowerCase();
-    
+
     const tbody = document.querySelector('#dataTableEnvios tbody');
     tbody.innerHTML = '';
 
@@ -99,12 +99,12 @@ window.cargarEnviosFiltrados = function() {
             const fechaEntrega = envio.fechaEntrega ? envio.fechaEntrega : 'Fecha no cargada';
             const estadoBadge = getEstadoBadge(envio.estado);
             const observaciones = envio.observaciones || 'Sin observaciones';
-        
+
             row.innerHTML = `
                 <td>${envio.idVenta}</td>
                 <td>${envio.clienteNombreCompleto}</td>
                 <td>${envio.clienteDomicilio}</td>
-                <td>${estadoBadge}</td>
+                <td>${observaciones}</td> <td>${estadoBadge}</td>
                 <td>${fechaEntrega}</td>
                 <td>
                     <div class="d-flex gap-2">
@@ -119,7 +119,7 @@ window.cargarEnviosFiltrados = function() {
             tbody.appendChild(row);
         });
     } else {
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center">No se encontraron envíos con los filtros seleccionados.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center">No se encontraron envíos con los filtros seleccionados.</td></tr>`;
     }
 }
 
