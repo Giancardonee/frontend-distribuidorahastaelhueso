@@ -148,6 +148,8 @@ async function registrarEnvio(idVenta) {
     const selectOpcionEnvio = document.getElementById('selectOpcionEnvio');
     const fechaEntregaSeleccionadaSpan = document.getElementById('fechaEntregaSeleccionada');
     const opcionEnvioSeleccionada = selectOpcionEnvio.value;
+    // Referencia al textarea de observaciones
+    const inputObservacionesEnvio = document.getElementById('inputObservacionesEnvio');
 
     let estadoEnvio = '';
     let fechaParaEnvio = null;
@@ -172,10 +174,15 @@ async function registrarEnvio(idVenta) {
         return;
     }
 
+    // Obtenemos el valor de las observaciones del textarea.
+    const observacionesParaEnvio = inputObservacionesEnvio.value.trim() || null;
+
     const envioDTO = {
         idVenta: idVenta,
         estado: estadoEnvio,
-        fechaEntrega: fechaParaEnvio
+        fechaEntrega: fechaParaEnvio,
+        // Agregamos el campo de observaciones al DTO
+        observaciones: observacionesParaEnvio
     };
     
     try {
@@ -194,13 +201,16 @@ async function registrarEnvio(idVenta) {
             console.log('Envío registrado con éxito:', nuevoEnvio);
 
             // 1. Reinicia el select a la opción por defecto.
-            selectOpcionEnvio.value = 'programar_mas_tarde'; 
+            selectOpcionEnvio.value = ''; 
 
             // 2. Limpia el contenido del <span> que contiene la fecha seleccionada.
             fechaEntregaSeleccionadaSpan.textContent = ''; 
             
             // 3. Oculta el contenedor completo para que no se vea el fondo ni el borde.
             fechaEntregaSeleccionadaContainer.style.display = 'none';
+            
+            // Limpia el campo de observaciones.
+            inputObservacionesEnvio.value = '';
 
         } else {
             const errorData = await response.json();
