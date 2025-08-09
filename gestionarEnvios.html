@@ -258,17 +258,15 @@
                             </div>
                         </div>
                         <div class="modal fade" id="modalCalendario" tabindex="-1" aria-labelledby="modalCalendarioLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="modalCalendarioLabel">Seleccionar Día</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <div class="modal-dialog modal-lg"> <div class="modal-content">
+                                    <div class="modal-header bg-primary text-white"> <h5 class="modal-title" id="modalCalendarioLabel"><i class="fas fa-calendar-alt me-2"></i>Seleccionar Día de Envío</h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <div class="modal-body">
-                                        <input type="date" id="filtroFechaEnvio" class="form-control">
+                                    <div class="modal-body p-4"> <div class="mb-3">
+                                            <label for="filtroFechaEnvio" class="form-label">Fecha de Entrega:</label>
+                                            <input type="date" id="filtroFechaEnvio" class="form-control form-control-lg"> </div>
                                     </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                    <div class="modal-footer bg-light"> <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                                         <button type="button" class="btn btn-primary" onclick="filtrarPorFecha()">Aceptar</button>
                                     </div>
                                 </div>
@@ -314,7 +312,7 @@
         <script src="js/datatables-simple-demo.js"></script>
         <script src="js/generic/confirmacion.js"></script>
         <script src="js/generic/showToast.js"></script>
-        <script src="js/gestionDeEnvios/jsprueba.js"></script>
+        <script src="js/gestionDeEnvios/gestionarEnvios.js"></script>
         <script src="js/generic/cargarUsuarioEnFooter.js"></script>
     </body>
 </html>

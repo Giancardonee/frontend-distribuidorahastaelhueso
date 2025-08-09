@@ -536,13 +536,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     </div>
                     <div class="col-12 col-md-4 text-end">
-                        <button type="button" class="btn btn-success btn-sm btn-select-product rounded-md"
-                                data-product-id="${product.idProducto}"
-                                data-product-nombre="${product.nombre}"
-                                data-product-precio-minorista="${product.precioMinorista || 0}"
-                                data-product-precio-mayorista="${product.precioMayorista || 0}"
-                                data-product-stock="${product.stock || 0}"> Seleccionar
-                        </button>
+                    <button type="button" class="btn btn-success btn-sm btn-select-product rounded-md"
+                            data-product-id="${product.idProducto}"
+                            data-product-nombre="${product.nombre}"
+                            data-product-nombre-marca="${product.nombreMarca || ''}"
+                            data-product-peso="${product.peso !== undefined && product.peso !== null ? product.peso : ''}"
+                            data-product-precio-minorista="${product.precioMinorista || 0}"
+                            data-product-precio-mayorista="${product.precioMayorista || 0}"
+                            data-product-stock="${product.stock || 0}"> Seleccionar
+                    </button>
                     </div>
                 `;
                 ul.appendChild(li);
@@ -561,6 +563,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const precioMinorista = parseFloat(btn.dataset.productPrecioMinorista);
             const precioMayorista = parseFloat(btn.dataset.productPrecioMayorista);
             const stockDisponible = parseInt(btn.dataset.productStock);
+            const productMarca = btn.dataset.productNombreMarca; // <-- NUEVO
+            const productPeso = btn.dataset.productPeso; // <-- NUEVO
 
             if (currentProductLineElement) {
                 const productoInput = currentProductLineElement.querySelector('.producto-input');
@@ -574,7 +578,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 productoPrecioMayoristaHidden.value = precioMayorista.toFixed(2);
                 productoStockHidden.value = stockDisponible;
 
-                productoInput.value = productName;
+                 const nombreCompleto = `${productMarca || ''} ${productName || ''} ${productPeso ? productPeso + 'kg' : ''}`.trim();
+                 productoInput.value = nombreCompleto;
+
                 productoIdHidden.value = productId;
 
                 // Si se selecciona un nuevo producto, por defecto se usa el precio minorista
@@ -613,7 +619,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="col-md-4">
                 <label for="productoVenta_${lineaCounter}" class="visually-hidden-on-small-screens">Producto:</label>
                 <div class="input-group">
-                    <input type="text" class="form-control producto-input" id="productoVenta_${lineaCounter}" placeholder="Seleccione un producto..." required readonly value="${productData.nombre || ''}">
+                    <input type="text" class="form-control producto-input" id="productoVenta_${lineaCounter}" placeholder="Seleccione un producto..." required readonly value="${[productData.nombreMarca, productData.nombre, productData.peso ? productData.peso.toFixed(2) + ' kg' : ''].filter(Boolean).join(' ') || ''}">
                     <button class="btn btn-outline-secondary btn-abrir-buscador-producto rounded-md" type="button"><i class="fas fa-search"></i></button>
                 </div>
                 <input type="hidden" class="producto-id-hidden" value="${productData.idProducto || ''}">
@@ -966,17 +972,9 @@ document.addEventListener('DOMContentLoaded', () => {
         ventaClienteNombreInput.setAttribute('placeholder', 'Seleccione un cliente...');
         ventaClienteNombreInput.classList.remove('is-invalid');
 
-        // REMOVIDO: Resetear el descuento global a 0
-        // inputDescuento.value = 0;
-        calculateTotalSale(); // Esto recalculará el total
 
-        // Si existen los inputs de usuario (no en tu HTML actual, pero por si los añades)
-        // if (ventaUsuarioNombreInput) {
-        //     ventaUsuarioNombreInput.value = authenticatedUserName;
-        // }
-        // if (ventaUsuarioIdInput) {
-        //     ventaUsuarioIdInput.value = authenticatedUserId || '';
-        // }
+        calculateTotalSale(); 
+
     }
 
     // --- AGREGADO: Configuración inicial al cargar la página ---

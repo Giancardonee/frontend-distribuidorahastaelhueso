@@ -1,4 +1,4 @@
-// js/gestionDeEnvios/jsprueba.js
+// js/gestionDeEnvios/gestionarEnvios.js
 
 const baseUrl = 'http://localhost:8080/distribuidora';
 const jwtToken = localStorage.getItem('jwtToken');
@@ -185,9 +185,9 @@ window.verDetalleVenta = async function(idVenta) {
         ventaDetalle.detalles.forEach(p => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${p.marcaProducto}</td>
+                <td>${p.nombreMarca}</td>
                 <td>${p.nombreProducto}</td>
-                <td>${p.pesoProducto} kg</td>
+                <td>${p.peso} kg</td>
                 <td>${p.cantidad}</td>
             `;
             productosBody.appendChild(row);
