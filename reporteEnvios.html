@@ -77,6 +77,36 @@
             .modal-body li {
                 margin-bottom: 8px;
             }
+
+            .btn-estado {
+                border-radius: 15px;
+                padding: 0.25rem 0.75rem;
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: #fff;
+                border: none;
+                cursor: default;
+                user-select: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .btn-estado.entregado {
+                background-color: #81c784; /* verde pastel */
+            }
+
+            .btn-estado.pendiente {
+                background-color: #ffd54f; /* amarillo pastel */
+                color: #5a4b00; /* texto un poco más oscuro para contraste */
+            }
+
+            .btn-estado.sin-fecha {
+                background-color: #6c757d; /* gris */
+            }
+
+
+
         </style>
     </head>
     <body class="sb-nav-fixed">
@@ -196,7 +226,7 @@
                                                 <th>Observaciones</th>
                                                 <th>Fecha de Entrega</th>
                                                 <th>Productos</th>
-                                                <th>Entregado</th>
+                                                <th>Estado</th>
                                             </tr>
                                         </thead>
                                         <tbody>

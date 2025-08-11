@@ -218,6 +218,8 @@ function renderizarTabla(envios) {
     }
 
     const newTbody = document.createElement('tbody');
+
+    // Mantenemos la lógica de filtro en esta línea
     const enviosFiltrados = envios.filter(envio => envio.estado !== 'SIN_FECHA');
 
     if (enviosFiltrados.length > 0) {
@@ -229,9 +231,12 @@ function renderizarTabla(envios) {
                 ? formatearFechaYYYYMMDD(envio.fechaEntrega) 
                 : '—';
 
-            const entregadoCircle = envio.estado === 'ENTREGADO' 
-                ? `<div class="delivered-circle mx-auto"><i class="fas fa-check"></i></div>`
-                : `<div class="delivered-circle not-delivered mx-auto"><i class="fas fa-circle-xmark"></i></div>`;
+            let estadoButton;
+            if (envio.estado === 'ENTREGADO') {
+                estadoButton = `<span class="badge bg-success fs-6">Entregado</span>`; // <-- Añade fs-6 aquí
+            } else {
+                estadoButton = `<span class="badge bg-warning text-dark fs-6">Pendiente</span>`; // <-- Y aquí
+            }
 
             row.innerHTML = `
                 <td>${envio.idEnvio}</td>
@@ -246,12 +251,11 @@ function renderizarTabla(envios) {
                         Ver detalles
                     </button>
                 </td>
-                <td class="text-center">${entregadoCircle}</td>
+                <td class="text-center">${estadoButton}</td>
             `;
             newTbody.appendChild(row);
         });
     } else {
-        // Si no hay datos, agregamos una fila vacía para que el datatable muestre "No se encontraron entradas"
         const row = document.createElement('tr');
         row.innerHTML = `<td colspan="8" class="text-center">No se encontraron entradas</td>`;
         newTbody.appendChild(row);
@@ -268,13 +272,13 @@ function renderizarTabla(envios) {
             { select: [5, 6, 7], sortable: false }
         ],
         labels: {
-                placeholder: "Buscar...",
-                perPage: "Registros por página",
-                noRows: "No se encontraron registros",
-                noResults: "No se encontraron resultados que coincidan con tu búsqueda",
-                info: "Mostrando de {start} a {end} de {rows} registros",
-                next: "Siguiente",
-                prev: "Anterior"
+            placeholder: "Buscar...",
+            perPage: "Registros por página",
+            noRows: "No se encontraron registros",
+            noResults: "No se encontraron resultados que coincidan con tu búsqueda",
+            info: "Mostrando de {start} a {end} de {rows} registros",
+            next: "Siguiente",
+            prev: "Anterior"
         }
     });
 }
