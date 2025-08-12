@@ -100,7 +100,9 @@ window.cargarEnviosFiltrados = function() {
             const estadoBadge = getEstadoBadge(envio.estado);
             const observaciones = envio.observaciones || 'Sin observaciones';
 
+            // Aquí se agrega la nueva columna "Nro Envio" al principio
             row.innerHTML = `
+                <td>${envio.idEnvio}</td>
                 <td>${envio.idVenta}</td>
                 <td>${envio.clienteNombreCompleto}</td>
                 <td>${envio.clienteDomicilio}</td>
@@ -119,7 +121,8 @@ window.cargarEnviosFiltrados = function() {
             tbody.appendChild(row);
         });
     } else {
-        tbody.innerHTML = `<tr><td colspan="7" class="text-center">No se encontraron envíos con los filtros seleccionados.</td></tr>`;
+        // Se actualiza el colspan a 8 para que ocupe el ancho total
+        tbody.innerHTML = `<tr><td colspan="8" class="text-center">No se encontraron envíos con los filtros seleccionados.</td></tr>`;
     }
 }
 

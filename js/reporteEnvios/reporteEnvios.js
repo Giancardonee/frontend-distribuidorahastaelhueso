@@ -3,6 +3,12 @@
 const baseUrl = 'http://localhost:8080/distribuidora';
 const jwtToken = localStorage.getItem('jwtToken');
 let dataTable;
+// 1. Nueva variable de estado para el filtro actual
+let currentFilter = {
+    type: 'todos',
+    fechaInicio: null,
+    fechaFin: null
+};
 
 document.addEventListener('DOMContentLoaded', () => {
     if (!jwtToken) {
@@ -19,28 +25,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const buttonText = button.textContent.trim();
         const dateFilterInput = document.getElementById('dateFilter');
-        dateFilterInput.value = '';
-
+        
         if (button.id === 'mostrarTodosBtn') {
+            dateFilterInput.value = '';
+            // Actualizamos el estado del filtro
+            currentFilter = { type: 'todos' };
             cargarTodosLosEnvios();
         } else if (button.id === 'generarPDFBtn') {
             generarPDF();
         } else if (buttonText === 'Hoy') {
             const today = getLocalIsoDate(new Date());
             dateFilterInput.value = today;
+            // Actualizamos el estado del filtro
+            currentFilter = { type: 'fecha', fecha: today };
             cargarEnviosPorFechaQuery(today);
         } else if (buttonText === 'Esta Semana') {
-            cargarEnviosPorRangoDeFecha(getStartOfWeek(), getEndOfWeek());
+            dateFilterInput.value = '';
+            const fechaInicio = getStartOfWeek();
+            const fechaFin = getEndOfWeek();
+            // Actualizamos el estado del filtro
+            currentFilter = { type: 'rango', fechaInicio, fechaFin };
+            cargarEnviosPorRangoDeFecha(fechaInicio, fechaFin);
         } else if (buttonText === 'Este Mes') {
-            cargarEnviosPorRangoDeFecha(getStartOfMonth(), getEndOfMonth());
+            dateFilterInput.value = '';
+            const fechaInicio = getStartOfMonth();
+            const fechaFin = getEndOfMonth();
+            // Actualizamos el estado del filtro
+            currentFilter = { type: 'rango', fechaInicio, fechaFin };
+            cargarEnviosPorRangoDeFecha(fechaInicio, fechaFin);
         }
     });
 
     document.getElementById('dateFilter').addEventListener('change', (event) => {
         const fechaSeleccionada = event.target.value;
         if (fechaSeleccionada) {
+            // Actualizamos el estado del filtro
+            currentFilter = { type: 'fecha', fecha: fechaSeleccionada };
             cargarEnviosPorFechaQuery(fechaSeleccionada);
         } else {
+            // Actualizamos el estado del filtro
+            currentFilter = { type: 'todos' };
             cargarTodosLosEnvios();
         }
     });
@@ -118,19 +142,16 @@ async function cargarEnviosDesdeBackend(url) {
         const enviosData = await response.json();
 
         try {
-            // Siempre destruimos el DataTable antes de modificar la tabla
             if (dataTable) {
                 dataTable.destroy();
                 dataTable = null;
             }
 
-            // Si no hay datos, mostramos mensaje y salimos
             if (!enviosData || enviosData.length === 0) {
                 mostrarMensajeSinEnvios();
                 return;
             }
 
-            // Si hay datos, renderizamos la tabla
             renderizarTabla(enviosData);
 
         } catch (renderError) {
@@ -181,7 +202,6 @@ async function cargarEnviosDesdeBackend(url) {
     }
 }
 
-
 function mostrarMensajeSinEnvios() {
     if (dataTable) {
         dataTable.destroy();
@@ -200,8 +220,6 @@ function mostrarMensajeSinEnvios() {
     }
 }
 
-
-// Función para formatear fechas "YYYY-MM-DD" a "dd/mm/yyyy"
 function formatearFechaYYYYMMDD(fechaStr) {
     if (!fechaStr) return '—';
     const [anio, mes, dia] = fechaStr.split("-");
@@ -218,8 +236,6 @@ function renderizarTabla(envios) {
     }
 
     const newTbody = document.createElement('tbody');
-
-    // Mantenemos la lógica de filtro en esta línea
     const enviosFiltrados = envios.filter(envio => envio.estado !== 'SIN_FECHA');
 
     if (enviosFiltrados.length > 0) {
@@ -227,15 +243,15 @@ function renderizarTabla(envios) {
             const row = document.createElement('tr');
             const telefono = envio.clienteTelefono || 'N/A';
             const observaciones = envio.observaciones || 'Sin observaciones';
-            const fechaEntrega = envio.fechaEntrega 
-                ? formatearFechaYYYYMMDD(envio.fechaEntrega) 
+            const fechaEntrega = envio.fechaEntrega
+                ? formatearFechaYYYYMMDD(envio.fechaEntrega)
                 : '—';
 
             let estadoButton;
             if (envio.estado === 'ENTREGADO') {
-                estadoButton = `<span class="badge bg-success fs-6">Entregado</span>`; // <-- Añade fs-6 aquí
+                estadoButton = `<span class="badge bg-success fs-6">Entregado</span>`;
             } else {
-                estadoButton = `<span class="badge bg-warning text-dark fs-6">Pendiente</span>`; // <-- Y aquí
+                estadoButton = `<span class="badge bg-warning text-dark fs-6">Pendiente</span>`;
             }
 
             row.innerHTML = `
@@ -246,7 +262,7 @@ function renderizarTabla(envios) {
                 <td>${observaciones}</td>
                 <td>${fechaEntrega}</td>
                 <td>
-                    <button class="btn btn-info btn-sm btn-info-details" 
+                    <button class="btn btn-info btn-sm btn-info-details"
                             onclick="verDetalleVenta(${envio.idVenta}, '${envio.idEnvio}', '${envio.clienteDomicilio}')">
                         Ver detalles
                     </button>
@@ -283,7 +299,6 @@ function renderizarTabla(envios) {
     });
 }
 
-
 function verDetalleVenta(idVenta, idEnvio, domicilio) {
     const url = `${baseUrl}/envios/venta/${idVenta}`;
     
@@ -316,7 +331,58 @@ function verDetalleVenta(idVenta, idEnvio, domicilio) {
         });
 }
 
+// 2. Nueva función para generar PDF basada en el estado del filtro
 function generarPDF() {
-    console.log("Generando PDF...");
-    alert('Funcionalidad de generar PDF no implementada.');
+    console.log("Generando PDF basado en el filtro actual:", currentFilter);
+
+    let url;
+
+    switch (currentFilter.type) {
+        case 'fecha':
+        case 'hoy':
+            if (!currentFilter.fecha) {
+                alert('No se ha seleccionado una fecha para generar el reporte.');
+                return;
+            }
+            url = `${baseUrl}/envios/reporte-pdf?fecha=${currentFilter.fecha}`;
+            break;
+        case 'rango':
+            if (!currentFilter.fechaInicio || !currentFilter.fechaFin) {
+                alert('No se ha seleccionado un rango de fechas para generar el reporte.');
+                return;
+            }
+            url = `${baseUrl}/envios/reporte-pdf-rango?fechaInicio=${currentFilter.fechaInicio}&fechaFin=${currentFilter.fechaFin}`;
+            break;
+        case 'todos':
+        default:
+            alert('Por favor, selecciona un filtro de fecha antes de generar el reporte.');
+            return;
+    }
+
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${jwtToken}`
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error al generar el PDF. Código de estado: ' + response.status);
+        }
+        return response.blob();
+    })
+    .then(blob => {
+        const urlBlob = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = urlBlob;
+        a.download = 'reporte_envios.pdf'; // Puedes mejorar el nombre del archivo si quieres
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(urlBlob);
+    })
+    .catch(error => {
+        console.error('Error al generar el PDF:', error);
+        alert('Hubo un error al generar el PDF. Intente de nuevo. ' + error.message);
+    });
 }
