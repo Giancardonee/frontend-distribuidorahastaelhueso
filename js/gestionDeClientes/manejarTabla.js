@@ -331,6 +331,25 @@ async function modificarCliente(id, clienteDTO) {
     }
 }
 
+
+
+// Función para mostrar un modal de alerta
+function showModal(titulo, mensaje) {
+  // Encuentra los elementos del modal por su ID
+  const modalElement = document.getElementById('alertModal');
+  const modalTitle = document.getElementById('alertModalLabel');
+  const modalBody = document.getElementById('alertModalBody');
+
+  // Asigna el título y el mensaje
+  modalTitle.textContent = titulo;
+  modalBody.textContent = mensaje;
+
+  // Crea una instancia del modal de Bootstrap y muéstralo
+  const alertModal = new bootstrap.Modal(modalElement);
+  alertModal.show();
+}
+
+
 // Función para eliminar un cliente
 async function eliminarCliente(id, nombreCliente = 'cliente') {
     try {
@@ -348,16 +367,43 @@ async function eliminarCliente(id, nombreCliente = 'cliente') {
             }
         });
 
+        // 1. Manejo del caso de éxito: 204 No Content
         if (response.status === 204) {
             showToast(`Cliente "${nombreCliente}" eliminado con éxito.`, 'success', 'Cliente Eliminado');
             await cargarClientes();
-        } else {
-            const errorData = await response.json();
-            const errorMessage = errorData.message || `Error ${response.status}: No se pudo eliminar el cliente.`;
-            throw new Error(errorMessage);
+        } 
+        
+        // 2. Manejo de errores específicos
+        else if (response.status === 409) {
+            // Error 409 Conflict: El cliente tiene deudas pendientes
+            const errorMessage = await response.text(); 
+            // `showModal` es un ejemplo. Puedes usar un toast, un modal, etc.
+            showModal('No se puede eliminar el cliente', errorMessage);
+        } 
+        
+        else if (response.status === 404) {
+            // Error 404 Not Found: El cliente no existe
+            showToast(`Error: Cliente "${nombreCliente}" no encontrado.`, 'danger', 'Fallo al Eliminar');
+        } 
+        
+        // 3. Manejo de errores genéricos o no previstos
+        else {
+            let errorMessage = `Error ${response.status}: No se pudo eliminar el cliente.`;
+            try {
+                // Intenta parsear el error como JSON para un mensaje más detallado
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } catch (jsonError) {
+                // Si el cuerpo no es JSON, simplemente usa el mensaje por defecto
+                console.error("Error al parsear el cuerpo del error como JSON:", jsonError);
+            }
+            showToast(`Error al eliminar cliente: ${errorMessage}`, 'danger', 'Fallo al Eliminar');
         }
+
     } catch (e) {
         console.error('Error en eliminarCliente:', e);
-        showToast(`Error al eliminar cliente: ${e.message}`, 'danger', 'Fallo al Eliminar');
+        showToast(`Error de conexión: ${e.message}`, 'danger', 'Fallo al Eliminar');
     }
 }
+
+

@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // Para tener en cuenta si es un pedido pendiente
-    let pedidoPendienteId = null;
+    let pedidoPendienteId = null; 
 
     let lineaCounter = 0; // Contador para las líneas de productos en el formulario
 
@@ -133,81 +133,61 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
+    // Logica para leer parametros de la URL en pedidos pendientes: 
     // Lógica para pre-cargar el formulario si viene de la página de productos faltantes
-    const urlParams = new URLSearchParams(window.location.search);
-    const pedidoIdFromUrl = urlParams.get('pedidoId');
-    const clienteIdFromUrl = urlParams.get('clienteId');
-    const nombreClienteFromUrl = urlParams.get('nombreCliente');
-    const productoIdFromUrl = urlParams.get('productoId');
+        const urlParams = new URLSearchParams(window.location.search);
+        const pedidoIdFromUrl = urlParams.get('pedidoId');
+        const clienteIdFromUrl = urlParams.get('clienteId');
+        const nombreClienteFromUrl = urlParams.get('nombreCliente');
+        const productoIdFromUrl = urlParams.get('productoId');
+        const unidadesFromUrl = urlParams.get('unidades');
+        const nombreProductoFromUrl = urlParams.get('nombreProducto');
+        const marcaProductoFromUrl = urlParams.get('marcaProducto');
+        const precioUnitarioFromUrl = urlParams.get('precioUnitario');
 
-    // Función asíncrona para cargar el pedido pendiente
-    async function loadPendingOrder() {
         if (pedidoIdFromUrl && clienteIdFromUrl && productoIdFromUrl) {
             pedidoPendienteId = pedidoIdFromUrl;
-
+            
             // 1. Cargar el cliente
             selectedClientId = parseInt(clienteIdFromUrl);
             ventaClienteIdInput.value = clienteIdFromUrl;
             ventaClienteNombreInput.value = nombreClienteFromUrl;
-
-            // 2. Obtener los datos completos del producto por ID
-            const token = getAuthToken();
-            if (!token) {
-                showToast("Token de autenticación no encontrado. Por favor, inicia sesión.", 'danger');
-                return;
-            }
-
-            try {
-                const response = await fetch(`${API_PRODUCTOS_URL}/${productoIdFromUrl}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Error al cargar el producto: ${errorText || response.statusText}`);
-                }
-
-                const productoCompleto = await response.json();
-
-                if (productoCompleto) {
-                    // 3. Construir el objeto productData con los datos de la API y de la URL
-                    const productData = {
-                        idProducto: productoCompleto.idProducto,
-                        nombre: productoCompleto.nombre,
-                        nombreMarca: productoCompleto.nombreMarca,
-                        peso: productoCompleto.peso,
-                        stock: productoCompleto.stock,
-                        precioMinorista: productoCompleto.precioMinorista,
-                        precioMayorista: productoCompleto.precioMayorista,
-                        cantidad: urlParams.get('unidades') || 1, // Usar la cantidad de la URL si existe, sino 1
-                        tipoPrecio: 'MINORISTA' // Por defecto, se carga el precio minorista
-                    };
-
-                    // 4. Usar tu función addProductLine para crear la línea de producto con todos los datos
-                    const newProductLine = addProductLine(productData);
-
-                    // Deshabilitar la búsqueda para esta línea y el input de cantidad
-                    if (newProductLine) {
-                        newProductLine.querySelector('.btn-abrir-buscador-producto').style.display = 'none';
-                        const cantidadInput = newProductLine.querySelector('.cantidad-input');
-                        if (cantidadInput) {
-                            cantidadInput.disabled = true;
-                        }
-                    }
-
-                    showToast("Se cargó un pedido pendiente.", 'info');
-
-                    // Recalcular el total después de la carga inicial
-                    calculateTotalSale();
-                } else {
-                    showToast("No se pudo cargar el producto para el pedido pendiente.", 'danger');
-                }
-            } catch (error) {
-                console.error("Error fetching product by ID:", error);
-                showToast(`Error al cargar el producto: ${error.message}`, 'danger');
-            }
+            
+            // 2. Cargar el producto
+            const newProductLine = addProductLine(); // Utiliza tu función existente para agregar una línea
+            
+            // Poblar los campos con los datos del URL
+            const selectProducto = newProductLine.querySelector('.product-select-dropdown');
+            const inputUnidades = newProductLine.querySelector('input[name="unidades[]"]');
+            const inputPrecioUnitario = newProductLine.querySelector('input[name="precio-unitario[]"]');
+            const inputMarca = newProductLine.querySelector('input[name="marca[]"]');
+            
+            // Almacenar el ID del producto en el data-attribute
+            newProductLine.setAttribute('data-product-id', productoIdFromUrl);
+            
+            // Se puede mostrar el nombre del producto directamente
+            // Para el dropdown, el valor puede ser un objeto si la estructura lo permite
+            // Por simplicidad, popularemos los campos de solo-lectura y ocultaremos el botón de búsqueda
+            selectProducto.innerHTML = `<option value="${productoIdFromUrl}">${nombreProductoFromUrl}</option>`;
+            selectProducto.value = productoIdFromUrl;
+            
+            // Actualizar otros campos
+            inputUnidades.value = unidadesFromUrl;
+            inputPrecioUnitario.value = precioUnitarioFromUrl;
+            inputMarca.value = marcaProductoFromUrl;
+            
+            // Deshabilitar la búsqueda y el input de unidades para esta línea
+            newProductLine.querySelector('.btn-abrir-buscador-producto').style.display = 'none';
+            inputUnidades.disabled = true;
+            
+            // Opcional: mostrar un toast para informar al usuario
+            showToast("Se cargó un pedido pendiente.", 'info');
+            
+            // Recalcular el total después de la carga inicial
+            calculateTotal();
         }
-    }
+
+
 
     // --- FUNCIÓN PARA OBTENER EL PERFIL DEL USUARIO DESDE LA API ---
     async function fetchUserProfile() {
@@ -310,9 +290,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     /**
-* Muestra el modal de detalle de venta y carga los datos.
-* @param {number} saleId - El ID de la venta a mostrar.
-*/
+ * Muestra el modal de detalle de venta y carga los datos.
+ * @param {number} saleId - El ID de la venta a mostrar.
+ */
     async function showSaleDetailsInModal(saleId) {
         currentSaleId = saleId; // Almacena el ID para la descarga
         detalleVentaIdSpan.textContent = saleId;
@@ -395,6 +375,8 @@ document.addEventListener('DOMContentLoaded', () => {
             detalleVentaProductosTbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error al cargar el detalle.</td></tr>';
         }
     }
+
+
 
 
     // --- Lógica del MODAL DE BÚSQUEDA Y SELECCIÓN DE CLIENTES ---
@@ -496,18 +478,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const searchModal = bootstrap.Modal.getInstance(modalBuscarClienteElement);
             if (searchModal) {
-                // Mueve el foco antes de ocultar el modal
-                ventaClienteNombreInput.focus();
                 searchModal.hide();
             }
-            // Agregamos una función para eliminar el backdrop de forma segura
-            modalBuscarClienteElement.addEventListener('hidden.bs.modal', () => {
-                const backdrop = document.querySelector('.modal-backdrop');
-                if (backdrop) {
-                    backdrop.remove();
-                }
-            }, { once: true }); // Usamos { once: true } para que el evento se ejecute solo una vez.
-
             showToast(`Cliente "${fullName}" seleccionado.`, 'success');
         }
     });
@@ -641,8 +613,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    
-
     productSearchResults.addEventListener('click', (event) => {
         if (event.target.classList.contains('btn-select-product')) {
             const btn = event.target;
@@ -651,12 +621,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const precioMinorista = parseFloat(btn.dataset.productPrecioMinorista);
             const precioMayorista = parseFloat(btn.dataset.productPrecioMayorista);
             const stockDisponible = parseInt(btn.dataset.productStock);
-            const productMarca = btn.dataset.productNombreMarca;
-            const productPeso = btn.dataset.productPeso;
+            const productMarca = btn.dataset.productNombreMarca; // <-- NUEVO
+            const productPeso = btn.dataset.productPeso; // <-- NUEVO
 
             if (currentProductLineElement) {
                 const productoInput = currentProductLineElement.querySelector('.producto-input');
                 const productoIdHidden = currentProductLineElement.querySelector('.producto-id-hidden');
+                // const radioMinorista = currentProductLineElement.querySelector('.tipo-precio-radio[value="MINORISTA"]'); // Ya no se necesita forzar minorista aquí
                 const productoPrecioMinoristaHidden = currentProductLineElement.querySelector('.producto-precio-minorista-hidden');
                 const productoPrecioMayoristaHidden = currentProductLineElement.querySelector('.producto-precio-mayorista-hidden');
                 const productoStockHidden = currentProductLineElement.querySelector('.producto-stock-hidden');
@@ -665,11 +636,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 productoPrecioMayoristaHidden.value = precioMayorista.toFixed(2);
                 productoStockHidden.value = stockDisponible;
 
-                const nombreCompleto = `${productMarca || ''} ${productName || ''} ${productPeso ? productPeso + 'kg' : ''}`.trim();
-                productoInput.value = nombreCompleto;
+                 const nombreCompleto = `${productMarca || ''} ${productName || ''} ${productPeso ? productPeso + 'kg' : ''}`.trim();
+                 productoInput.value = nombreCompleto;
 
                 productoIdHidden.value = productId;
 
+                // Si se selecciona un nuevo producto, por defecto se usa el precio minorista
                 const precioUnitarioInput = currentProductLineElement.querySelector('.precio-unitario-input');
                 const radioMinorista = currentProductLineElement.querySelector('.tipo-precio-radio[value="MINORISTA"]');
                 if (radioMinorista) {
@@ -677,31 +649,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 precioUnitarioInput.value = precioMinorista.toFixed(2);
 
+
                 productoInput.classList.remove('is-invalid');
 
-                // Llamamos a la función de cálculo
                 calculateLineSubtotalAndTotal({ target: currentProductLineElement.querySelector('.cantidad-input') });
             }
 
-            // --- CAMBIO CLAVE: Lógica de cierre del modal mejorada ---
             const searchModal = bootstrap.Modal.getInstance(modalBuscarProductoElement);
             if (searchModal) {
-                // Mueve el foco a un elemento fuera del modal antes de cerrarlo
-                const cantidadInput = currentProductLineElement.querySelector('.cantidad-input');
-                if (cantidadInput) {
-                    cantidadInput.focus();
-                }
                 searchModal.hide();
             }
-
-            // --- Asegurar que el backdrop se elimine ---
-            modalBuscarProductoElement.addEventListener('hidden.bs.modal', () => {
-                const backdrop = document.querySelector('.modal-backdrop');
-                if (backdrop) {
-                    backdrop.remove();
-                }
-            }, { once: true });
-            
             showToast(`Producto "${productName}" seleccionado.`, 'success');
         }
     });
@@ -808,7 +765,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (productData.idProducto) {
             calculateLineSubtotalAndTotal({ target: currentLine.querySelector('.cantidad-input') });
         }
-         return newRow; 
     }
 
     function removeProductLine(event) {
@@ -816,104 +772,78 @@ document.addEventListener('DOMContentLoaded', () => {
         calculateTotalSale();
     }
 
-    
-
     function calculateLineSubtotalAndTotal(event) {
-    const lineElement = event.target.closest('.producto-linea');
-    const productoInput = lineElement.querySelector('.producto-input'); // Nuevo
-    const cantidadInput = lineElement.querySelector('.cantidad-input');
-    const precioUnitarioInput = lineElement.querySelector('.precio-unitario-input');
-    const subtotalInput = lineElement.querySelector('.subtotal-input');
-    const tipoPrecioRadios = lineElement.querySelectorAll('.tipo-precio-radio');
-    const productoIdHidden = lineElement.querySelector('.producto-id-hidden');
-    const precioMinoristaHidden = lineElement.querySelector('.producto-precio-minorista-hidden');
-    const precioMayoristaHidden = lineElement.querySelector('.producto-precio-mayorista-hidden');
-    const productoStockHidden = lineElement.querySelector('.producto-stock-hidden');
-    const cantidadInvalidFeedback = lineElement.querySelector('.cantidad-invalid-feedback');
+        const lineElement = event.target.closest('.producto-linea');
+        const cantidadInput = lineElement.querySelector('.cantidad-input');
+        const precioUnitarioInput = lineElement.querySelector('.precio-unitario-input');
+        const subtotalInput = lineElement.querySelector('.subtotal-input');
+        const tipoPrecioRadios = lineElement.querySelectorAll('.tipo-precio-radio');
+        const productoIdHidden = lineElement.querySelector('.producto-id-hidden');
+        const precioMinoristaHidden = lineElement.querySelector('.producto-precio-minorista-hidden');
+        const precioMayoristaHidden = lineElement.querySelector('.producto-precio-mayorista-hidden');
+        const productoStockHidden = lineElement.querySelector('.producto-stock-hidden');
+        const cantidadInvalidFeedback = lineElement.querySelector('.cantidad-invalid-feedback');
 
-    const cantidad = parseInt(cantidadInput.value) || 0;
-    let precioUnitarioDesdeBase = 0;
-    let tipoPrecioSeleccionado = '';
-    const stockDisponible = parseInt(productoStockHidden.value) || 0;
+        const cantidad = parseInt(cantidadInput.value) || 0;
+        let precioUnitarioDesdeBase = 0; // Variable temporal para el precio de la base de datos
+        let tipoPrecioSeleccionado = '';
+        const stockDisponible = parseInt(productoStockHidden.value) || 0;
 
-    tipoPrecioRadios.forEach(radio => {
-        if (radio.checked) {
-            tipoPrecioSeleccionado = radio.value;
+        tipoPrecioRadios.forEach(radio => {
+            if (radio.checked) {
+                tipoPrecioSeleccionado = radio.value;
+            }
+        });
+
+        if (productoIdHidden.value) {
+            const precioMinorista = parseFloat(precioMinoristaHidden.value);
+            const precioMayorista = parseFloat(precioMayoristaHidden.value);
+
+            if (tipoPrecioSeleccionado === 'MAYORISTA') {
+                precioUnitarioDesdeBase = precioMayorista;
+            } else { // MINORISTA o default
+                precioUnitarioDesdeBase = precioMinorista;
+            }
+
+            // Si el input de precio unitario ya tiene un valor (ej. por un descuento aplicado), lo mantenemos.
+            // Si no, o si el usuario cambia el tipo de precio, lo actualizamos con el de la base.
+            const currentDisplayedPrice = parseFloat(precioUnitarioInput.value);
+
+            if (isNaN(currentDisplayedPrice) || currentDisplayedPrice === 0 || event.target.classList.contains('tipo-precio-radio')) {
+                precioUnitarioInput.value = precioUnitarioDesdeBase.toFixed(2);
+            }
         }
-    });
 
-    if (productoIdHidden.value) {
-        const precioMinorista = parseFloat(precioMinoristaHidden.value);
-        const precioMayorista = parseFloat(precioMayoristaHidden.value);
+        // AHORA SÍ, obtenemos el precio unitario del INPUT para el cálculo del subtotal
+        const precioUnitarioParaCalculo = parseFloat(precioUnitarioInput.value) || 0;
 
-        if (tipoPrecioSeleccionado === 'MAYORISTA') {
-            precioUnitarioDesdeBase = precioMayorista;
-        } else { // MINORISTA o default
-            precioUnitarioDesdeBase = precioMinorista;
+
+        if (cantidad > stockDisponible) {
+            cantidadInput.classList.add('is-invalid');
+            cantidadInvalidFeedback.textContent = `Stock insuficiente. Disponible: ${stockDisponible}`;
+            cantidadInvalidFeedback.style.display = 'block';
+            subtotalInput.value = formatCurrency(0);
+            subtotalInput.setAttribute('data-unformatted-subtotal', '0.00');
+        } else if (cantidad < 1) {
+            cantidadInput.classList.add('is-invalid');
+            cantidadInvalidFeedback.textContent = 'La cantidad debe ser al menos 1.';
+            cantidadInvalidFeedback.style.display = 'block';
+            subtotalInput.value = formatCurrency(0);
+            subtotalInput.setAttribute('data-unformatted-subtotal', '0.00');
+        }
+        else {
+            cantidadInput.classList.remove('is-invalid');
+            cantidadInvalidFeedback.textContent = 'Cantidad inválida.';
+            cantidadInvalidFeedback.style.display = 'none';
+
+            // Usamos precioUnitarioParaCalculo que viene directamente del input
+            const subtotal = cantidad * precioUnitarioParaCalculo;
+            subtotalInput.value = formatCurrency(subtotal);
+            subtotalInput.setAttribute('data-unformatted-subtotal', subtotal.toFixed(2));
         }
 
-        const currentDisplayedPrice = parseFloat(precioUnitarioInput.value);
-
-        if (isNaN(currentDisplayedPrice) || currentDisplayedPrice === 0 || event.target.classList.contains('tipo-precio-radio')) {
-            precioUnitarioInput.value = precioUnitarioDesdeBase.toFixed(2);
-        }
+        calculateTotalSale();
     }
-
-    const precioUnitarioParaCalculo = parseFloat(precioUnitarioInput.value) || 0;
-
-    // ----- CAMBIO AQUÍ: LÓGICA PARA STOCK INSUFICIENTE -----
-    if (cantidad > stockDisponible) {
-        cantidadInput.classList.add('is-invalid');
-        cantidadInvalidFeedback.textContent = `Stock insuficiente. Disponible: ${stockDisponible}`;
-        cantidadInvalidFeedback.style.display = 'block';
-        subtotalInput.value = formatCurrency(0);
-        subtotalInput.setAttribute('data-unformatted-subtotal', '0.00');
-
-        // Extraemos los datos del producto para el modal
-        const productoNombreCompleto = productoInput.value;
-        const productoNombreMatch = productoNombreCompleto.match(/(.+?)(?:\s\((.+?)\))?$/);
-        const productoNombre = productoNombreMatch ? productoNombreMatch[1].trim() : productoNombreCompleto;
-        const productoMarcaPeso = productoNombreMatch ? productoNombreMatch[2] : null;
-        let productoMarca = null;
-        let productoPeso = null;
-        if (productoMarcaPeso) {
-            const parts = productoMarcaPeso.split(' ');
-            productoMarca = parts[0];
-            productoPeso = parts.length > 1 ? parts[1].replace('kg', '') : null;
-        }
-
-        // Llamamos a la función global para mostrar el modal de faltantes
-        if (window.showModalConfirmarFaltante && selectedClientId) {
-            window.showModalConfirmarFaltante({
-                clienteId: selectedClientId,
-                clienteNombre: ventaClienteNombreInput.value,
-                productoId: parseInt(productoIdHidden.value),
-                productoNombre: productoNombre,
-                productoMarca: productoMarca,
-                productoPeso: productoPeso,
-                unidadesFaltantes: cantidad - stockDisponible
-            });
-        }
-    } else if (cantidad < 1) {
-        cantidadInput.classList.add('is-invalid');
-        cantidadInvalidFeedback.textContent = 'La cantidad debe ser al menos 1.';
-        cantidadInvalidFeedback.style.display = 'block';
-        subtotalInput.value = formatCurrency(0);
-        subtotalInput.setAttribute('data-unformatted-subtotal', '0.00');
-    } else {
-        cantidadInput.classList.remove('is-invalid');
-        cantidadInvalidFeedback.textContent = 'Cantidad inválida.';
-        cantidadInvalidFeedback.style.display = 'none';
-
-        const subtotal = cantidad * precioUnitarioParaCalculo;
-        subtotalInput.value = formatCurrency(subtotal);
-        subtotalInput.setAttribute('data-unformatted-subtotal', subtotal.toFixed(2));
-    }
-
-    calculateTotalSale();
-    }
-
-
 
     function calculateTotalSale() {
         let total = 0;
@@ -1074,14 +1004,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (newSale && newSale.idVenta) {
             //Llamamos a la función para registrar el envío con el ID de la venta creada.
-                if (pedidoPendienteId) {
-                    await marcarPedidoComoResuelto(pedidoPendienteId);
-                }
-
             await registrarEnvio(newSale.idVenta);
             showToast("Venta y envío registrados exitosamente. ID de Venta: " + newSale.idVenta, 'success');
-            
-
             resetRegisterSaleForm();
             showSaleDetailsInModal(newSale.idVenta);
             } else {
@@ -1111,28 +1035,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     }
 
-// --- AGREGADO: Configuración inicial al cargar la página ---
+    // --- AGREGADO: Configuración inicial al cargar la página ---
     async function initializePageUserAndForm() {
         const userProfile = await fetchUserProfile();
         if (userProfile) {
             authenticatedUserId = userProfile.id;
             authenticatedUserName = userProfile.name;
+        } else {
+            // Manejar el caso donde el perfil del usuario no se pudo cargar
         }
 
-        // Si no hay un pedido pendiente en la URL, agregamos una línea de producto vacía.
-        // Si hay un pedido, 'loadPendingOrder()' ya se encargó de agregar la línea.
-        const urlParams = new URLSearchParams(window.location.search);
-        const pedidoIdFromUrl = urlParams.get('pedidoId');
-        if (!pedidoIdFromUrl) {
-            addProductLine({});
-        }
+        addProductLine({});
     }
 
-    // Llama a la función para cargar el pedido pendiente primero.
-    // La función loadPendingOrder ya llama a addProductLine si es necesario.
-    loadPendingOrder();
-
-    // Luego, inicializa el usuario y el formulario de la página.
     initializePageUserAndForm();
 
     // Listener para el botón de descargar comprobante
@@ -1197,27 +1112,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // Función para marcar un pedido pendiente como resuelto
-    async function marcarPedidoComoResuelto(id) {
-        const token = getAuthToken();
-        if (!token) {
-            showToast("Token de autenticación no encontrado.", 'danger');
-            return;
-        }
-        try {
-            const response = await fetch(`${BASE_URL}/distribuidora/pedidoPendiente/${id}/marcar-resuelto`, {
-                method: 'PATCH',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            if (!response.ok) {
-                throw new Error('Error al marcar el pedido como resuelto.');
-            }
-            console.log(`Pedido pendiente con ID ${id} marcado como resuelto.`);
-        } catch (error) {
-            console.error('Error al marcar pedido como resuelto:', error);
-            showToast(`Error: ${error.message}`, 'danger');
-        }
+async function marcarPedidoComoResuelto(id) {
+    const token = getAuthToken();
+    if (!token) {
+        showToast("Token de autenticación no encontrado.", 'danger');
+        return;
     }
+    try {
+        const response = await fetch(`${BASE_URL}/distribuidora/pedidoPendiente/${id}/marcar-resuelto`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Error al marcar el pedido como resuelto.');
+        }
+        console.log(`Pedido pendiente con ID ${id} marcado como resuelto.`);
+    } catch (error) {
+        console.error('Error al marcar pedido como resuelto:', error);
+        showToast(`Error: ${error.message}`, 'danger');
+    }
+}
+
 
 });
