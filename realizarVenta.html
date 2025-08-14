@@ -46,6 +46,7 @@
                         <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
                                 <a class="nav-link" href="gestionarProductos.html">Gestionar Productos</a>
+                                 <a class="nav-link" href="productosFaltantes.html">Productos Faltantes</a>
                                 <a class="nav-link" href="gestionarMarcas.html">Gestionar Marcas</a>
                                 <a class="nav-link" href="incrementar_precio_productos.html">Incrementar Precio</a>
                                 <a class="nav-link" href="decrementar_precio_productos.html">Decrementar Precio</a>
@@ -423,14 +424,48 @@
     </div>
 
 
+    <div class="modal fade" id="modalConfirmarFaltante" tabindex="-1" aria-labelledby="modalConfirmarFaltanteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalConfirmarFaltanteLabel">Registrar Producto Faltante</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>El stock disponible es insuficiente. ¿Desea registrar el producto como faltante?</p>
+                <form id="formPedidoPendiente">
+                    <div class="mb-3">
+                        <label class="form-label">Cliente:</label>
+                        <strong id="faltanteClienteNombre"></strong>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Producto:</label>
+                        <strong id="faltanteProductoNombre"></strong>
+                        <span class="text-muted" id="faltanteProductoMarcaPeso"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Unidades Faltantes:</label>
+                        <strong id="faltanteUnidades"></strong>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btnRegistrarFaltante">Registrar como faltante</button>
+            </div>
+        </div>
+    </div>
+</div>
+
     <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="js/scripts.js"></script>
     <script src="js/generic/cargarUsuarioEnFooter.js"></script>
     <script src="js/logout.js"></script>
-    <script src="js/realizarVenta/scriptRealizarVenta.js"></script>
+    <script src="js/realizarVenta/scriptPedidosPendientes.js"></script>
     <script src="js/realizarVenta/programarEnvio.js"></script>
     <script src="js/realizarVenta/scriptRegistrarPago.js"></script>
+    <script src="js/realizarVenta/probarRealizarVenta.js"></script>
 </body>
 </html>
