@@ -4,17 +4,31 @@
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
+        <meta name="description" content="Menú de estadísticas de ventas y clientes." />
         <meta name="author" content="" />
-        <title>Menú principal</title>
+        <title>Estadísticas Mensuales</title>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="css/styles.css" rel="stylesheet" />
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <style>
+            .select-container {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .chart-container-small {
+                position: relative;
+                height: 250px; 
+                width: 250px;  
+            }
+        </style>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+             <a class="navbar-brand ps-3" href="index.html">Menú principal</a>
             <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
                 <div class="input-group">
                 </div>
@@ -25,7 +39,7 @@
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="configuracionUsuario.html">Configuracion</a></li>
                         <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" id="logoutButton" href="#">Cerrar sesion</a></li>
+                        <li><a class="dropdown-item" href="#!">Cerrar sesion</a></li>
                     </ul>
                 </li>
             </ul>
@@ -34,7 +48,7 @@
             <div id="layoutSidenav_nav">
                 <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                     <div class="sb-sidenav-menu">
-                        <div class="nav">
+                       <div class="nav">
                             <div class="sb-sidenav-menu-heading">Inicio</div>
                             <a class="nav-link" href="index.html">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
@@ -109,106 +123,166 @@
                                     <a class="nav-link" href="reporteEnvios.html">Reporte de Envios </a>
                                 </nav>
                             </div>
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseEstadisticas" aria-expanded="false" aria-controls="collapseEstadisticas">
-                            <div class="sb-nav-link-icon"><i class="fas fa-chart-bar"></i></div>
-                            Estadísticas
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseEstadisticas" aria-expanded="true" aria-controls="collapseEstadisticas">
+                                <div class="sb-nav-link-icon"><i class="fas fa-chart-bar"></i></div>
+                                Estadísticas
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
-                            <div class="collapse" id="collapseEstadisticas" aria-labelledby="headingEstadisticas" data-bs-parent="#sidenavAccordion">
+                            <div class="collapse show" id="collapseEstadisticas" aria-labelledby="headingEstadisticas" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="estadisticasMensuales.html">Estadísticas Mensuales</a>
+                                    <a class="nav-link active" href="estadisticasMensuales.html">Estadísticas Mensuales</a>
                                 </nav>
                             </div>
                         </div>
                     </div>
                     <div class="sb-sidenav-footer">
-                        <div class="small">Sesión iniciada como:</div>
-                        <span id="nombreEnFooter">Usuario Admin</span>
+                    <div class="small">Sesión iniciada como:</div>
+                         <span id="nombreEnFooter">Usuario Admin</span>
                     </div>
                 </nav>
             </div>
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">Menú principal</h1>
+                        <h1 class="mt-4">Menú de Estadísticas Mensuales</h1>
+                         <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item"><a href="index.html">Menú Principal</a></li>
+                            <li class="breadcrumb-item active">Estadisticas</li>
+                            <li class="breadcrumb-item active">Estadisticas Mensuales</li>
+                         </ol>
                         <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Detalles</li>
+                            <li class="breadcrumb-item active">Análisis de Ventas y Rendimiento</li>
                         </ol>
+                        <div class="select-container">
+                            <label for="mesSelector" class="fw-bold">Seleccionar Mes:</label>
+                            <select id="mesSelector" class="form-select w-25">
+                                <option value="2024-04">Abril 2024</option>
+                                <option value="2024-03">Marzo 2024</option>
+                                <option value="2024-02">Febrero 2024</option>
+                            </select>
+                        </div>
+
                         <div class="row">
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-primary text-white mb-4">
-                                    <div class="card-body fw-bold"><i class="bi bi-graph-up-arrow me-2"></i>Cantidad de Ventas</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <div id="cantidadVentas"  class="fs-5 text-white">....</div>
-                                    </div>
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card bg-primary text-white h-100">
+                                <div class="card-body d-flex align-items-center justify-content-between">
+                                    <div class="fw-bold">Ventas Totales del Mes</div>
+                                    <i class="fas fa-shopping-cart fa-2x"></i>
                                 </div>
-                            </div>
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-warning text-white mb-4">
-                                    <div class="card-body fw-bold"><i class="bi bi-person-fill me-2"></i>Cantidad de Clientes</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <div id="cantidadClientes" class="fs-5 text-white">...</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-success text-white mb-4">
-                                     <div class="card-body fw-bold"><i class="bi bi-box-seam-fill me-2"></i>Cantidad de Productos</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <div id="cantidadProductos" class="fs-5 text-white">...</div>
-                                    </div>
-                                </div>
-                            </div>
-                        <div class="col-xl-3 col-md-6">
-                                <div class="card bg-danger text-white mb-4">
-                                    <div class="card-body fw-bold"><i class="bi bi-tags-fill me-2"></i>Cantidad de Marcas</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <div id="cantidadMarcas" class="fs-5 text-white">...</div>
-                                    </div>
+                                <div class="card-footer d-flex align-items-center justify-content-between">
+                                    <div class="fs-5 text-white" id="totalVentasMes">0</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-xl-6">
-                                <div class="card mb-4">
-                                    <div class="card-header">
-                                        <i class="fas fa-chart-area me-1"></i>
-                                        Grafico de ventas
-                                    </div>
-                                    <div class="card-body"><canvas id="myAreaChart" width="100%" height="40"></canvas></div>
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card bg-warning text-white h-100">
+                                <div class="card-body d-flex align-items-center justify-content-between">
+                                    <div class="fw-bold">Recaudación Total del Mes</div>
+                                    <i class="fas fa-dollar-sign fa-2x"></i>
+                                </div>
+                                <div class="card-footer d-flex align-items-center justify-content-between">
+                                    <div class="fs-5 text-white" id="totalRecaudadoMes">$0.00</div>
                                 </div>
                             </div>
-                            <div class="col-xl-6">
-                                <div class="card mb-4">
-                                    <div class="card-header">
-                                        <i class="fas fa-chart-bar me-1"></i>
-                                        Productos mas vendidos
-                                    </div>
-                                    <div class="card-body"><canvas id="myBarChart" width="100%" height="40"></canvas></div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card bg-success text-white h-100">
+                                <div class="card-body d-flex align-items-center justify-content-between">
+                                    <div class="fw-bold">Producto Más Vendido</div>
+                                    <i class="fas fa-cube fa-2x"></i>
+                                </div>
+                                <div class="card-footer d-flex align-items-center justify-content-between">
+                                    <div class="fs-5 text-white" id="productoMasVendido">N/A</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card bg-danger text-white h-100">
+                                <div class="card-body d-flex align-items-center justify-content-between">
+                                    <div class="fw-bold">Marca mas vendida</div>
+                                    <i class="fas fa-tag fa-2x"></i>
+                                </div>
+                                <div class="card-footer d-flex align-items-center justify-content-between">
+                                    <div class="fs-5 text-white" id="diaMasVendido">N/A</div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </main>
-                <footer class="py-4 bg-light mt-auto">
-                                <div class="container-fluid px-4">
-                                    <div class="d-flex align-items-center justify-content-between small">
-                                        <div class="text-muted">&copy;Distribuidora Hasta el Hueso</div>
-                                        <div>
-                                        </div>
+                        
+                        <div class="row">
+                            <div class="col-xl-6">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <i class="fas fa-chart-line me-1"></i>
+                                        Recaudación Mensual (Histórico)
+                                    </div>
+                                    <div class="card-body"><canvas id="recaudacionChartPlaceholder"></canvas></div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <i class="fas fa-chart-pie me-1"></i>
+                                        Ventas por Día de la Semana
+                                    </div>
+                                    <div class="card-body"><canvas id="ventasPorDiaChartPlaceholder"></canvas></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-xl-4">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <i class="fas fa-users me-1"></i>
+                                        Clientes Destacados del Mes
+                                    </div>
+                                    <div class="card-body"><canvas id="clientesDestacadosChartPlaceholder"></canvas></div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <i class="fas fa-truck-fast me-1"></i>
+                                        Estado de los Envíos
+                                    </div>
+                                    <div class="card-body d-flex justify-content-center align-items-center">
+                                    <div class="chart-container-small">
+                                        <canvas id="estadoEnviosChartPlaceholder"></canvas>
                                     </div>
                                 </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <i class="fas fa-box-open me-1"></i>
+                                        Productos TOP del Mes
+                                    </div>
+                                    <div class="card-body"><canvas id="productosTopMesChartPlaceholder"></canvas></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </main>
+                <footer class="py-4 bg-light mt-auto">
+                             <div class="container-fluid px-4">
+                                <div class="d-flex align-items-center justify-content-between small">
+                                    <div class="text-muted">&copy;Distribuidora Hasta el Hueso</div>
+                                </div>
+                            </div>
                 </footer>
             </div>
         </div>
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="js/scripts.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-        <script src="js/index/chart-data-processor.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
         <script src="js/datatables-simple-demo.js"></script>
-        <script src="js/index/cargarCantidadRegistros.js"></script>
-        <script src="js/logout.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="js/config.js"></script>
         <script src="js/generic/cargarUsuarioEnFooter.js"></script>
+        <script src="js/estadisticasMensuales/cargarCardsYGraficos.js"></script>
     </body>
 </html>
