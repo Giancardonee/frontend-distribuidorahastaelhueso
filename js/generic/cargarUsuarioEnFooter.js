@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Definimos la URL de tu endpoint para obtener el perfil
     // Asegúrate de que este endpoint devuelve al menos el 'nombreUsuario'
-    const apiUrl = 'http://localhost:8080/distribuidora/auth/perfil'; 
+    const apiUrl = `${window.API_BASE_URL}/auth/perfil`;
 
     try {
         const response = await fetch(apiUrl, {

@@ -2,7 +2,8 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- URLs Base ---
-    const BASE_URL = "http://localhost:8080";
+    const BASE_URL = window.API_BASE_URL;
+
     const API_BASE_URL = `${BASE_URL}/distribuidora/ventas`; // Para registrar la venta
     const API_CLIENTES_URL = `${BASE_URL}/distribuidora/clientes`;
     const API_PRODUCTOS_URL = `${BASE_URL}/distribuidora/productos`;

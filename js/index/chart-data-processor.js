@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const response = await fetch('http://localhost:8080/distribuidora/ventas', {
+            const response = await fetch(`${window.API_BASE_URL}/ventas`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -148,7 +148,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                     display: false
                                 },
                                 ticks: {
-                                    maxTicksLimit: 7
+                                    autoSkip: false, // Desactiva el salto de etiquetas
+                                    maxRotation: 20, // Rota las etiquetas para que no se superpongan
+                                    minRotation: 20
                                 }
                             }],
                             yAxes: [{

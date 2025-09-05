@@ -3,9 +3,10 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- URLs Base ---
-    const BASE_URL = "http://localhost:8080";
-    const API_PAGOS_URL = `${BASE_URL}/distribuidora/pagos/registrar`;
-    const API_PERFIL_URL = `${BASE_URL}/distribuidora/auth/perfil`;
+    const BASE_URL = window.API_BASE_URL;
+
+    const API_PAGOS_URL = `${BASE_URL}/pagos/registrar`;
+    const API_PERFIL_URL = `${BASE_URL}/auth/perfil`;
 
     // --- Referencias a elementos del DOM del modal de pago ---
     const modalRegistrarPagoElement = document.getElementById('modalRegistrarPago');

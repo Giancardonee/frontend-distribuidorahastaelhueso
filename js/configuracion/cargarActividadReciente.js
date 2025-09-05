@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isoString) return 'Fecha no disponible';
         const date = new Date(isoString);
         
-        // Opciones para el formato deseado
+        
         const options = {
             day: 'numeric',
             month: 'long',

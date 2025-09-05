@@ -1,16 +1,13 @@
-// js/decrementarPrecios/decrementarPrecios.js
+
 
 document.addEventListener('DOMContentLoaded', async event => {
     // Script para actualizar el nombre de usuario en el footer
     const nombreEnFooterSpan = document.getElementById('nombreEnFooter');
     if (nombreEnFooterSpan) {
-        // Se asume que 'cargarUsuarioEnFooter.js' manejará esto.
-        // Si no, podrías obtener el nombre del usuario de localStorage o de una API.
-        // nombreEnFooterSpan.textContent = "Usuario Admin"; 
     }
 
-    // URL base de tu API
-    const API_BASE_URL = 'http://localhost:8080/distribuidora/productos';
+    // URL base de LA API
+    const API_BASE_URL = `${window.API_BASE_URL}/productos`;
 
     // Función para obtener el token JWT del localStorage
     function getJwtToken() {
@@ -30,11 +27,20 @@ document.addEventListener('DOMContentLoaded', async event => {
         return true;
     }
 
+    // Función para formatear números como moneda con formato de miles (por ejemplo, $10.000,50)
+    function formatCurrency(value) {
+        if (value === undefined || value === null) {
+            return 'N/A';
+        }
+        // Utiliza el formato de moneda para Argentina (es-AR)
+        return `$${Number(value).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+
     // Inicializar Simple DataTables para la tabla de decremento de productos
     const datatablesDecremento = document.getElementById('datatablesDecremento');
     let productosDataTableDec; // Instancia de Simple DataTable para esta tabla
     let productCheckboxes; // Variable para los checkboxes, se actualizará al cargar productos
-
+    
     // --- Función para cargar los productos y renderizar la tabla ---
     async function cargarProductosEnTabla() {
         // Verifica autenticación antes de cargar productos
@@ -69,24 +75,26 @@ document.addEventListener('DOMContentLoaded', async event => {
 
             const productos = await response.json();
 
-            // Destruye la instancia existente de DataTables si ya está inicializada
             if (productosDataTableDec) {
                 productosDataTableDec.destroy();
             }
 
             const tableBody = document.querySelector('#datatablesDecremento tbody');
-            tableBody.innerHTML = ''; // Limpia el cuerpo de la tabla
+            tableBody.innerHTML = ''; 
 
             productos.forEach(producto => {
                 const row = `
-                    <tr id="producto_dec_${producto.idProducto}">
+                   <tr id="producto_inc_${producto.idProducto}">
                         <td><input type="checkbox" class="form-check-input product-checkbox" value="${producto.idProducto}"></td>
                         <td>${producto.idProducto}</td>
-                        <td>${producto.nombreMarca || 'N/A'}</td> <td>${producto.nombre || ''}</td>
-                        <td>${producto.peso !== undefined && producto.peso !== null ? producto.peso.toFixed(2) : 'N/A'} kg</td> <td>${producto.stock !== undefined && producto.stock !== null ? producto.stock : 'N/A'}</td>
-                        <td>$${producto.precioMinorista !== undefined && producto.precioMinorista !== null ? producto.precioMinorista.toFixed(2) : 'N/A'}</td>
-                        <td>$${producto.precioMayorista !== undefined && producto.precioMayorista !== null ? producto.precioMayorista.toFixed(2) : 'N/A'}</td>
-                        </tr>
+                        <td>${producto.nombreMarca || 'N/A'}</td> 
+                        <td>${producto.nombre || ''}</td>
+                        <td>${producto.peso !== undefined && producto.peso !== null ? producto.peso.toFixed(2) : 'N/A'}</td>
+                        <td>${producto.stock !== undefined && producto.stock !== null ? producto.stock : 'N/A'}</td>
+                        <td data-sort="${producto.precioCosto}">${formatCurrency(producto.precioCosto)}</td>
+                        <td data-sort="${producto.precioMinorista}">${formatCurrency(producto.precioMinorista)}</td>
+                        <td data-sort="${producto.precioMayorista}">${formatCurrency(producto.precioMayorista)}</td>
+                    </tr>
                 `;
                 tableBody.insertAdjacentHTML('beforeend', row);
             });
@@ -104,21 +112,20 @@ document.addEventListener('DOMContentLoaded', async event => {
                 },
                 perPageSelect: [5, 10, 15, 20, 25, ["Todas", -1]],
                 // Definir las columnas para que Simple DataTables las maneje correctamente.
-                // IMPORTANTE: Asegúrate de que el índice de la columna coincida con el orden en tu HTML.
+                // IMPORTANTE: El índice de la columna debe coindicir con el orden en el HTML.
                 columns: [
                     { select: 0, sortable: false }, // Checkbox
-                    { select: 1 }, // ID
-                    { select: 2 }, // Marca
-                    { select: 3 }, // Nombre
-                    { select: 4 }, // Peso
-                    { select: 5 }, // Stock
-                    { select: 6 }, // Precio Minorista
-                    { select: 7 }  // Precio Mayorista
-                    // No hay más columnas después de Mayorista si Descripción fue eliminada.
+                    { select: 1, sortable: true },  // Nro Producto
+                    { select: 2, sortable: true },  // Marca
+                    { select: 3, sortable: true },  // Nombre
+                    { select: 4, sortable: true },  // Peso
+                    { select: 5, sortable: true },  // Stock
+                    { select: 6, sortable: false }, // Precio Costo - Deshabilitado el ordenamiento
+                    { select: 7, sortable: false }, // Precio Minorista - Deshabilitado el ordenamiento
+                    { select: 8, sortable: false }  // Precio Mayorista - Deshabilitado el ordenamiento
                 ]
             });
 
-            // Re-asigna los eventos a los checkboxes después de recargar la tabla
             productCheckboxes = document.querySelectorAll('.product-checkbox');
 
         } catch (error) {
@@ -147,7 +154,6 @@ document.addEventListener('DOMContentLoaded', async event => {
 
     // --- Lógica de Selección de Productos ---
     seleccionarTodosBtn.addEventListener('click', function() {
-        // Asegúrate de que productCheckboxes esté actualizado con los elementos actuales de la tabla
         productCheckboxes = document.querySelectorAll('.product-checkbox');
         const allChecked = Array.from(productCheckboxes).every(cb => cb.checked);
         productCheckboxes.forEach(checkbox => {
@@ -185,8 +191,6 @@ document.addEventListener('DOMContentLoaded', async event => {
             valorDecrementoInput.classList.remove('is-invalid');
             feedbackValorDecremento.style.display = 'none';
         }
-
-        // Asegúrate de que productCheckboxes esté actualizado con los elementos actuales de la tabla
         productCheckboxes = document.querySelectorAll('.product-checkbox');
         const productosSeleccionados = Array.from(productCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
         if (productosSeleccionados.length === 0) {
@@ -226,7 +230,7 @@ document.addEventListener('DOMContentLoaded', async event => {
     formDecrementarPrecio.addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        // Quitar validaciones previas de Bootstrap antes de volver a validar
+        
         formDecrementarPrecio.classList.remove('was-validated');
         valorDecrementoInput.classList.remove('is-invalid');
 
@@ -242,7 +246,7 @@ document.addEventListener('DOMContentLoaded', async event => {
         }
 
         // Obtener los productos seleccionados
-        productCheckboxes = document.querySelectorAll('.product-checkbox'); // Asegurarse de tener los checkboxes actuales
+        productCheckboxes = document.querySelectorAll('.product-checkbox');
         const productosSeleccionadosIds = Array.from(productCheckboxes).filter(cb => cb.checked).map(cb => parseInt(cb.value));
 
         const tipoPrecio = document.querySelector('input[name="tipoPrecio"]:checked').value;
@@ -258,11 +262,13 @@ document.addEventListener('DOMContentLoaded', async event => {
         // `Math.abs` asegura que trabajamos con el valor absoluto, y luego lo hacemos negativo.
         valorAjuste = -Math.abs(valorAjuste); 
 
-        const confirmacion = confirm(`¿Estás seguro de aplicar un decremento de ${tipoAjuste === 'monto' ? '$' : ''}${parseFloat(valorDecrementoInput.value).toFixed(2)}${tipoAjuste === 'porcentaje' ? '%' : ''} al precio ${tipoPrecio} para los ${productosSeleccionadosIds.length} productos seleccionados?`);
+        const mensajeConfirmacion =`¿Estás seguro de aplicar un decremento de ${tipoAjuste === 'monto' ? '$' : ''}${parseFloat(valorDecrementoInput.value).toFixed(2)}${tipoAjuste === 'porcentaje' ? '%' : ''} al precio ${tipoPrecio} para los ${productosSeleccionadosIds.length} productos seleccionados?`;
+        // Usar await para esperar la respuesta del modal de Bootstrap
+        const confirmacion = await showConfirmationDialog(mensajeConfirmacion, 'Confirmar Ajuste', 'warning');
         if (!confirmacion) {
-            showToast('Operación de ajuste de precios cancelada.', 'info');
-            return;
+            return; // El usuario canceló la operación
         }
+
 
         // Deshabilitar el botón para evitar envíos múltiples
         btnAplicarDecremento.disabled = true;
@@ -285,7 +291,7 @@ document.addEventListener('DOMContentLoaded', async event => {
                 id: id,
                 monto: valorAjuste // Ya es negativo
             }));
-        } else { // tipoAjuste === 'porcentaje'
+        } else { 
             endpointUrl = `${API_BASE_URL}/precios/${tipoPrecio}/porcentaje`;
             payload = productosSeleccionadosIds.map(id => ({
                 id: id,

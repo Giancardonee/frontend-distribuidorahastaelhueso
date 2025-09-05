@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', async () => {
     // 1. Obtener el token JWT del localStorage
     const jwtToken = localStorage.getItem('jwtToken');
-    const baseUrl = 'http://localhost:8080/distribuidora';
+    const baseUrl = window.API_BASE_URL;
+
 
     // Si no hay token, el usuario no está autenticado, redirigir a login
     if (!jwtToken) {
@@ -183,6 +184,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                         prev: "Anterior"
                     },
                 });
+            }
+            if (pedidos.length > 0) {
+                showToast('Productos faltantes cargados correctamente.', 'success', 'Exito');
+            } else {
+                showToast('No se encontraron pedidos.', 'info', 'Sin Registros');
             }
         } catch (error) {
             console.error('Error:', error);

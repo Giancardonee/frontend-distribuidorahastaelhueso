@@ -2,8 +2,10 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- URLs Base ---
+
     const BASE_URL = "http://localhost:8080";
-    const API_BASE_URL = `${BASE_URL}/distribuidora/ventas`; // Para registrar la venta
+
+    const API_VENTAS_URL = `${BASE_URL}/distribuidora/ventas`;
     const API_CLIENTES_URL = `${BASE_URL}/distribuidora/clientes`;
     const API_PRODUCTOS_URL = `${BASE_URL}/distribuidora/productos`;
     const API_MARCAS_URL = `${BASE_URL}/distribuidora/marcas`;
@@ -260,7 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const response = await fetch(API_BASE_URL, {
+            const response = await fetch(API_VENTAS_URL, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -325,7 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const response = await fetch(`${API_BASE_URL}/${saleId}`, {
+            const response = await fetch(`${API_VENTAS_URL}/${saleId}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -1149,7 +1151,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const response = await fetch(`${API_BASE_URL}/${currentSaleId}/comprobante`, {
+            const response = await fetch(`${API_VENTAS_URL}/${currentSaleId}/comprobante`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`

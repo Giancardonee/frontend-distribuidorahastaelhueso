@@ -1,6 +1,6 @@
 // js/gestionDeClientes/manejarTabla.js
 
-const API_BASE_URL = "http://localhost:8080/distribuidora/clientes";
+const API_BASE_URL = `${window.API_BASE_URL}/clientes`;
 window.clientesDataTable = null; // Mantenemos esta variable global para el DataTable
 
 document.addEventListener('DOMContentLoaded', async event => {

@@ -1,6 +1,7 @@
 
 // Define la URL base de tu backend
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = window.API_BASE_URL;
+
 
 /**
  * Función para mostrar mensajes al usuario (éxito o error).

@@ -9,6 +9,7 @@
     <title>Listado de productos</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
+    <script src="js/config.development.js"></script>
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 
     <style>
@@ -175,6 +176,7 @@
                                             <th>Nombre</th>
                                             <th>Peso</th>
                                             <th>Stock</th>
+                                            <th>Precio Costo</th>
                                             <th>Precio Minorista</th>
                                             <th>Precio Mayorista</th>
                                             <th>Acciones</th>
@@ -242,6 +244,13 @@
                             </div>
                         </div>
                         <div class="mb-3">
+                            <label for="precioCostoInput" class="form-label">Precio de Costo:</label>
+                            <input type="number" step="0.01" class="form-control" id="precioCostoInput" min="0" autocomplete="off">
+                            <div class="invalid-feedback" id="feedbackPrecioCosto">
+                                El precio de costo debe ser un número no negativo.
+                            </div>
+                        </div>
+                        <div class="mb-3">
                             <label for="precioMinorista" class="form-label">Precio Minorista:</label>
                             <input type="number" step="0.01" class="form-control" id="precioMinorista" min="0" autocomplete="off">
                             <div class="invalid-feedback" id="feedbackPrecioMinorista">
@@ -253,6 +262,7 @@
                             <div class="invalid-feedback" id="feedbackPrecioMayorista">
                             </div>
                         </div>
+                
                     </form>
                 </div>
                 <div class="modal-footer">

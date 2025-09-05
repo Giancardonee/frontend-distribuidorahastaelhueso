@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     // 3. URLs de tus endpoints de conteo (ajusta si es necesario)
-    const baseUrl = 'http://localhost:8080/distribuidora'; 
+    const baseUrl = window.API_BASE_URL;
     const endpoints = {
         ventas: `${baseUrl}/ventas/contarRegistros`,   
         productos: `${baseUrl}/productos/contarRegistros`, 

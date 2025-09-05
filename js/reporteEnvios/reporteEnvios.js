@@ -1,6 +1,7 @@
 // js/reporteEnvios/reporteEnvios.js
 
-const baseUrl = 'http://localhost:8080/distribuidora';
+const baseUrl = window.API_BASE_URL;
+
 const jwtToken = localStorage.getItem('jwtToken');
 let dataTable;
 // 1. Nueva variable de estado para el filtro actual

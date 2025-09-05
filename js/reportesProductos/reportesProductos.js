@@ -1,5 +1,5 @@
 // --- API Configuration ---
-const API_BASE_URL = 'http://localhost:8080/distribuidora';
+const API_BASE_URL = window.API_BASE_URL;
 const REPORT_PRODUCTS_BASE_URL = `${API_BASE_URL}/productos`;
 const OUT_OF_STOCK_ENDPOINT = `${REPORT_PRODUCTS_BASE_URL}/sin-stock`;
 const TOP_SELLING_ENDPOINT = `${REPORT_PRODUCTS_BASE_URL}/mas-vendidos`;

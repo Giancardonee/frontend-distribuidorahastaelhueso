@@ -1,4 +1,4 @@
-// js/estadisticasMensuales/estadisticasMensuales.js
+
 
 // Nota: Asumimos que la variable API_BASE_URL está definida en el archivo config.js
 // que se carga antes en el HTML.
@@ -9,7 +9,7 @@ function getToken() {
 
 function showToast(message, type, title) {
     console.log(`Toast: ${title} - ${type} - ${message}`);
-    // Implementación real de showToast aquí
+   
 }
 
 function obtenerNombreMes(mes) {

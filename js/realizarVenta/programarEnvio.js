@@ -58,7 +58,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const baseUrl = 'http://localhost:8080/distribuidora';
+        const baseUrl = window.API_BASE_URL;
+
         const url = `${baseUrl}/envios/cantidad-por-fecha?fechaInicio=${fechaInicioStr}&fechaFin=${fechaFinStr}`;
 
         try {
@@ -186,7 +187,8 @@ async function registrarEnvio(idVenta) {
     };
     
     try {
-        const baseUrl = 'http://localhost:8080/distribuidora';
+        const baseUrl = window.API_BASE_URL;
+
         const response = await fetch(`${baseUrl}/envios/programar`, {
             method: 'POST',
             headers: {

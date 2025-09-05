@@ -13,8 +13,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentIdVenta = null;
     let currentIdCliente = null;
 
-    const API_PAGOS_URL = "http://localhost:8080/distribuidora/pagos/registrar";
-    const API_USUARIOS_URL = "http://localhost:8080/distribuidora/usuarios/id";
+    const API_PAGOS_URL = `${window.API_BASE_URL}/pagos/registrar`;
+    const API_USUARIOS_URL = `${window.API_BASE_URL}/usuarios/id`;
 
     // FUNCION PARA FORMATO DE MONEDA CON SÍMBOLO $ AL PRINCIPIO
     function formatCurrency(number) {

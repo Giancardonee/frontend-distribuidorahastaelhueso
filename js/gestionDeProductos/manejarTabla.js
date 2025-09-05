@@ -1,8 +1,10 @@
 document.addEventListener('DOMContentLoaded', event => {
    
 
-    const API_BASE_URL = 'http://localhost:8080/distribuidora/productos'; // URL base de tu API de productos
-    const API_MARCAS_URL = 'http://localhost:8080/distribuidora/marcas'; // Endpoint para cargar marcas
+    const API_PRODUCTOS_URL = `${window.API_BASE_URL}/productos`; 
+    const API_MARCAS_URL = `${window.API_BASE_URL}/marcas`;  
+
+
 
     const nombreEnFooterSpan = document.getElementById('nombreEnFooter');
     if (nombreEnFooterSpan) {
@@ -22,6 +24,7 @@ document.addEventListener('DOMContentLoaded', event => {
     const pesoProductoInput = document.getElementById('pesoProducto');
     const precioMinoristaInput = document.getElementById('precioMinorista');
     const precioMayoristaInput = document.getElementById('precioMayorista');
+    const precioCostoInput = document.getElementById('precioCostoInput');
     const btnGuardarCambiosProducto = document.getElementById('btnGuardarCambiosProducto');
     const btnAbrirModalNuevoProducto = document.getElementById('btnAbrirModalNuevoProducto');
 
@@ -106,7 +109,7 @@ document.addEventListener('DOMContentLoaded', event => {
 
         const token = getToken();
         try {
-            const response = await fetch(API_BASE_URL, {
+            const response = await fetch(API_PRODUCTOS_URL, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -148,10 +151,11 @@ document.addEventListener('DOMContentLoaded', event => {
                 row.insertCell(2).textContent = producto.nombre;
                 row.insertCell(3).textContent = producto.peso !== null ? `${producto.peso.toFixed(2)} kg` : '';
                 row.insertCell(4).textContent = producto.stock;
-                row.insertCell(5).textContent = producto.precioMinorista !== null ? `$${producto.precioMinorista.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '';
-                row.insertCell(6).textContent = producto.precioMayorista !== null ? `$${producto.precioMayorista.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '';
+                row.insertCell(5).textContent = producto.precioCosto !== null ? `$${producto.precioCosto.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : 'N/A';
+                row.insertCell(6).textContent = producto.precioMinorista !== null ? `$${producto.precioMinorista.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '';
+                row.insertCell(7).textContent = producto.precioMayorista !== null ? `$${producto.precioMayorista.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '';
 
-                const actionsCell = row.insertCell(7);
+                const actionsCell = row.insertCell(8);
                 actionsCell.classList.add('table-actions');
 
                 const marcaEncontrada = allMarcas.find(m => m.nombre === producto.nombreMarca);
@@ -159,7 +163,17 @@ document.addEventListener('DOMContentLoaded', event => {
 
                 // HTML de los botones en una sola línea para evitar problemas de saltos de línea
                 actionsCell.innerHTML = `
-                    <button class="btn btn-sm btn-info text-white btn-editar-producto" data-id="${producto.idProducto}" data-nombre="${producto.nombre}" data-idmarca="${idMarcaParaEditar}" data-peso="${producto.peso || ''}" data-stock="${producto.stock}" data-preciominorista="${producto.precioMinorista || ''}" data-preciomayorista="${producto.precioMayorista || ''}"><i class="fas fa-edit"></i> Editar</button>
+                    <button class="btn btn-sm btn-info text-white btn-editar-producto" 
+                        data-id="${producto.idProducto}" 
+                        data-nombre="${producto.nombre}" 
+                        data-idmarca="${idMarcaParaEditar}" 
+                        data-peso="${producto.peso || ''}" 
+                        data-stock="${producto.stock}" 
+                        data-preciominorista="${producto.precioMinorista || ''}" 
+                        data-preciomayorista="${producto.precioMayorista || ''}" 
+                        data-preciocosto="${producto.precioCosto || ''}">
+                        <i class="fas fa-edit"></i> Editar
+                    </button>    
                     <button class="btn btn-sm btn-danger btn-eliminar-producto" data-id="${producto.idProducto}" data-nombre="${producto.nombre}"><i class="fas fa-trash-alt"></i> Eliminar</button>
                 `;
             });
@@ -177,9 +191,19 @@ document.addEventListener('DOMContentLoaded', event => {
                         prev: "Anterior"
                     },
                     perPageSelect: [5, 10, 15, 20, 25, ["Todas", -1]],
+                                    columns: [
+                    { select: 0, sortable: true },  // Nro Producto
+                    { select: 1, sortable: true },  // Marca
+                    { select: 2, sortable: true },  // Nombre
+                    { select: 3, sortable: true },  // Peso
+                    { select: 4, sortable: true },  // Stock
+                    { select: 5, sortable: false }, // Precio Costo - Deshabilitado el ordenamiento
+                    { select: 6, sortable: false }, // Precio Minorista - Deshabilitado el ordenamiento
+                    { select: 7, sortable: false },  // Precio Mayorista - Deshabilitado el ordenamiento
+                    { select: 8, sortable: false } // Acciones
+                ]
                 });
                 
-
                 // DEBUG: Verificar si el tbody aún existe y es el mismo después de la inicialización
                 const newTbodyAfterInit = datatablesSimple.querySelector('tbody');
                 if (newTbodyAfterInit && newTbodyAfterInit === tbody) {
@@ -190,6 +214,7 @@ document.addEventListener('DOMContentLoaded', event => {
                     console.error('ERROR: tbody no encontrado después de la inicialización de DataTable.');
                 }
             }
+            showToast('Productos cargados correctamente.', 'success', 'Exito');
         } catch (error) {
             console.error('Error al obtener productos:', error);
             showToast('Error al cargar los productos. Por favor, inténtalo de nuevo.', 'danger', 'Error de Carga');
@@ -224,6 +249,8 @@ document.addEventListener('DOMContentLoaded', event => {
             pesoProductoInput.value = button.dataset.peso;
             precioMinoristaInput.value = button.dataset.preciominorista;
             precioMayoristaInput.value = button.dataset.preciomayorista;
+            precioCostoInput.value = button.dataset.preciocosto;
+
 
             const idMarcaProducto = button.dataset.idmarca;
             if (idMarcaProducto) {
@@ -257,22 +284,46 @@ document.addEventListener('DOMContentLoaded', event => {
         }
     });
 
-    function validarPrecios() {
+function validarPrecios() {
         // OBTENER LAS REFERENCIAS AQUÍ DENTRO DE LA FUNCIÓN
         const feedbackMinorista = document.getElementById('feedbackPrecioMinorista');
-        const feedbackMayorista = document.getElementById('feedbackPrecioMayorista'); // ID CORREGIDO
+        const feedbackMayorista = document.getElementById('feedbackPrecioMayorista');
+        const feedbackCosto = document.getElementById('feedbackPrecioCosto'); // <-- ¡FALTA ESTA LÍNEA!
 
         const precioMinoristaVal = parseFloat(precioMinoristaInput.value);
         const precioMayoristaVal = parseFloat(precioMayoristaInput.value);
+        const precioCostoVal = parseFloat(precioCostoInput.value);
 
+        // Limpiar validaciones previas
         precioMinoristaInput.setCustomValidity("");
         precioMinoristaInput.classList.remove('is-invalid');
-        if (feedbackMinorista) feedbackMinorista.textContent = ""; // Verificación de existencia
+        if (feedbackMinorista) feedbackMinorista.textContent = "";
 
         precioMayoristaInput.setCustomValidity("");
         precioMayoristaInput.classList.remove('is-invalid');
-        if (feedbackMayorista) feedbackMayorista.textContent = ""; // Verificación de existencia
+        if (feedbackMayorista) feedbackMayorista.textContent = "";
 
+        precioCostoInput.setCustomValidity("");
+        precioCostoInput.classList.remove('is-invalid');
+        if (feedbackCosto) feedbackCosto.textContent = "";
+
+        // Validacion para el precio de costo
+        const tieneCosto = precioCostoInput.value.trim() !== '' && !isNaN(precioCostoVal);
+        if (!tieneCosto) {
+            precioCostoInput.setCustomValidity("El precio de costo es obligatorio.");
+            precioCostoInput.classList.add('is-invalid');
+            if (feedbackCosto) feedbackCosto.textContent = "¡El precio de costo es obligatorio!";
+            return false;
+        }
+
+        if (precioCostoVal < 0) {
+            precioCostoInput.setCustomValidity("El precio de costo no puede ser negativo.");
+            precioCostoInput.classList.add('is-invalid');
+            if (feedbackCosto) feedbackCosto.textContent = "¡El precio de costo no puede ser negativo!";
+            return false;
+        }
+        
+        // Validación para precio minorista y mayorista
         const tieneMinorista = precioMinoristaInput.value.trim() !== '' && !isNaN(precioMinoristaVal);
         const tieneMayorista = precioMayoristaInput.value.trim() !== '' && !isNaN(precioMayoristaVal);
 
@@ -302,7 +353,8 @@ document.addEventListener('DOMContentLoaded', event => {
 
     precioMinoristaInput.addEventListener('input', validarPrecios);
     precioMayoristaInput.addEventListener('input', validarPrecios);
-
+    precioCostoInput.addEventListener('input', validarPrecios);
+    
     formProducto.addEventListener('submit', async function(e) {
         e.preventDefault();
         console.log('Formulario de producto enviado.'); // DEBUG
@@ -324,6 +376,7 @@ document.addEventListener('DOMContentLoaded', event => {
 
         const precioMinorista = precioMinoristaInput.value.trim() !== '' ? parseFloat(precioMinoristaInput.value) : null;
         const precioMayorista = precioMayoristaInput.value.trim() !== '' ? parseFloat(precioMayoristaInput.value) : null;
+        const precioCosto = precioCostoInput.value.trim() !== '' ? parseFloat(precioCostoInput.value) : null;
 
         const productoData = {
             nombre: nombre,
@@ -331,10 +384,11 @@ document.addEventListener('DOMContentLoaded', event => {
             stock: stock,
             precio_minorista: precioMinorista,
             precio_mayorista: precioMayorista,
+            precio_costo: precioCosto,
             idMarca: idMarca
         };
 
-        let url = API_BASE_URL;
+        let url = API_PRODUCTOS_URL;
         let method = '';
         const token = getToken();
 
@@ -345,7 +399,7 @@ document.addEventListener('DOMContentLoaded', event => {
         }
 
         if (id) {
-            url = `${API_BASE_URL}/${id}`;
+            url = `${API_PRODUCTOS_URL}/${id}`;
             method = 'PUT';
             console.log('Editando producto existente. ID:', id, 'Datos:', productoData); // DEBUG
         } else {
@@ -447,12 +501,12 @@ document.addEventListener('DOMContentLoaded', event => {
             'Sí, Eliminar',
             'Cancelar'
         );
-
+        // showToast(`Eliminando producto "${nombreProducto}"...`, 'info', 'Procesando');
         if (confirmed) {
             console.log('Confirmación de eliminación aceptada.'); // DEBUG
             const token = getToken();
             try {
-                const response = await fetch(`${API_BASE_URL}/${id}`, {
+                const response = await fetch(`${API_PRODUCTOS_URL}/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',

@@ -1,4 +1,4 @@
-// js/configuracion/cambiarPassword.js
+
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -21,12 +21,10 @@ document.addEventListener('DOMContentLoaded', () => {
             newPasswordInput.classList.remove('is-invalid');
             confirmNewPasswordInput.classList.remove('is-invalid');
 
-            // ***** VALIDACIÓN EN EL FRONTEND: NUEVA CONTRASEÑA Y REPETIR NUEVA CONTRASEÑA *****
+            // ***** VALIDACIÓN DEL FRONTEND: NUEVA CONTRASEÑA Y REPETIR NUEVA CONTRASEÑA *****
             if (newPassword !== confirmNewPassword) {
-                // Usar showToast en lugar de alert
                 showToast('La nueva contraseña y la confirmación no coinciden. Por favor, inténtalo de nuevo.', 'warning', 'Error de Contraseña');
                 
-                // Añadir clases de Bootstrap para indicar el error
                 newPasswordInput.classList.add('is-invalid');
                 confirmNewPasswordInput.classList.add('is-invalid');
                 
@@ -34,8 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return; // Detiene el envío del formulario
             }
 
-            // También puedes añadir validación para la longitud o complejidad de la contraseña aquí
-            if (newPassword.length < 6) { // Ejemplo de validación
+            if (newPassword.length < 6) { 
                 showToast('La nueva contraseña debe tener al menos 6 caracteres.', 'warning', 'Contraseña Demasiado Corta');
                 newPasswordInput.classList.add('is-invalid');
                 newPasswordInput.focus();
@@ -44,11 +41,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // **********************************************************************************
             const usernameLabel = document.getElementById('nombreDeUsuario');
-            // Obtener el nombre de usuario del texto del label. Asegúrate de que este label esté presente.
+            // Obtener el nombre de usuario del texto del label.
             const nombreDeUsuario = usernameLabel ? usernameLabel.textContent.trim() : null;
 
             if (!nombreDeUsuario || nombreDeUsuario === '') {
-                // Usar showToast en lugar de alert
                 showToast('Error: No se pudo obtener el nombre de usuario para la solicitud. Asegúrate de que el usuario esté logueado.', 'danger', 'Error de Usuario');
                 console.error('No se pudo obtener el nombre de usuario del elemento con ID "nombreDeUsuario".');
                 return;
@@ -69,11 +65,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
-                const response = await fetch(`http://localhost:8080/distribuidora/usuarios/cambiar-password/${nombreDeUsuario}`, {
+                const response = await fetch(`${API_BASE_URL}/usuarios/cambiar-password/${nombreDeUsuario}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}` // Asegúrate de que tu token se llame 'jwtToken'
+                        'Authorization': `Bearer ${token}` 
                     },
                     body: JSON.stringify({
                         passwordActual: currentPassword,
@@ -82,10 +78,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (response.ok) {
-                    // Usar showToast en lugar de alert
                     showToast('Contraseña actualizada exitosamente.', 'success', 'Contraseña Cambiada');
                     
-                    // Cerrar el modal (asumiendo que es un modal de Bootstrap)
+                    // Cerrar el modal 
                     const changePasswordModal = bootstrap.Modal.getInstance(document.getElementById('changePasswordModal'));
                     if (changePasswordModal) {
                         changePasswordModal.hide();
@@ -100,27 +95,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 } else {
                     const errorText = await response.text();
-                    // Usar showToast en lugar de alert
                     showToast(`Error al cambiar la contraseña: ${errorText}`, 'danger', 'Fallo al Cambiar Contraseña');
-                    // Opcional: Marcar el campo de contraseña actual como inválido si el error es por credenciales incorrectas
                     currentPasswordInput.classList.add('is-invalid');
                     currentPasswordInput.focus();
                 }
             } catch (error) {
                 console.error('Error de red o de la solicitud:', error);
-                // Usar showToast en lugar de alert
                 showToast('Ocurrió un error al intentar cambiar la contraseña. Intenta nuevamente.', 'danger', 'Error de Conexión');
             } finally {
                 // Re-habilitar el botón y restaurar su texto original
                 if (submitButton) {
                     submitButton.disabled = false;
-                    submitButton.innerHTML = 'Cambiar Contraseña'; // O el texto original
+                    submitButton.innerHTML = 'Cambiar Contraseña'; 
                 }
             }
         });
     }
 
-    // Opcional: Limpiar el formulario y validación cuando el modal se cierra
+    // Limpia el formulario y validación cuando el modal se cierra
     const changePasswordModalElement = document.getElementById('changePasswordModal');
     if (changePasswordModalElement) {
         changePasswordModalElement.addEventListener('hidden.bs.modal', function () {
@@ -130,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 form.classList.remove('was-validated');
                 form.querySelectorAll('.form-control').forEach(input => {
                     input.classList.remove('is-invalid');
-                    input.setCustomValidity(""); // Limpiar mensajes de validación personalizados
+                    input.setCustomValidity(""); 
                 });
             }
         });

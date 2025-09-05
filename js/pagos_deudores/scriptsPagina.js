@@ -15,8 +15,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const bodyTablaVentasCliente = document.getElementById('bodyTablaVentasCliente');
     const nombreClienteModal = document.getElementById('nombreClienteModal');
 
-    const API_CLIENTES_URL = "http://localhost:8080/distribuidora/clientes";
-    const API_VENTAS_CLIENTE_URL = "http://localhost:8080/distribuidora/ventas/cliente";
+    const API_CLIENTES_URL = `${window.API_BASE_URL}/clientes`;
+    const API_VENTAS_CLIENTE_URL = `${window.API_BASE_URL}/ventas/cliente`;
+
 
     let todosLosClientes = [];
     let clientesDeudores = [];

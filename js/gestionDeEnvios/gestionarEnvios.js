@@ -1,6 +1,6 @@
 // js/gestionDeEnvios/gestionarEnvios.js
+const baseUrl = window.API_BASE_URL;
 
-const baseUrl = 'http://localhost:8080/distribuidora';
 const jwtToken = localStorage.getItem('jwtToken');
 let enviosData = []; // Variable global para almacenar los envíos cargados
 

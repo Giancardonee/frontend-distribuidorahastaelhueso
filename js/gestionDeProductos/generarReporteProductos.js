@@ -2,7 +2,9 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    const API_BASE_URL = 'http://localhost:8080/distribuidora/productos';
+
+    const API_PRODUCTOS_URL = `${window.API_BASE_URL}/productos`;
+
     const reporteModal = new bootstrap.Modal(document.getElementById('reporteModal')); //
     const formReporte = document.getElementById('formReporte'); //
     const tipoPrecioReporteSelect = document.getElementById('tipoPrecioReporte'); //
@@ -61,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchProducts() {
         const token = getToken(); //
         try {
-            const response = await fetch(API_BASE_URL, {
+            const response = await fetch(API_PRODUCTOS_URL, {
                 headers: {
                     'Authorization': `Bearer ${token}` //
                 }

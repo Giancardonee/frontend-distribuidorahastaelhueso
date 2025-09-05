@@ -1,8 +1,6 @@
-// js/configuracion/actualizarPerfil.js
 
 document.addEventListener('DOMContentLoaded', () => {
-    const apiBaseUrl = 'http://localhost:8080/distribuidora/usuarios';
-
+    const apiBaseUrl = `${window.API_BASE_URL}/usuarios`;
     const actualUsernameElement = document.getElementById('nombreDeUsuario');
     const nombreEnFooterSpan = document.getElementById('nombreEnFooter');
 
@@ -79,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     let fieldNameForDto;
                     let isValid = true;
                     let errorMessage = '';
-                    // Capturar el texto de la etiqueta (label) para usarlo en los mensajes
+        
                     const fieldLabel = infoFieldDiv.querySelector('label')?.textContent.replace(':', '').trim() || 'este campo';
 
 
@@ -117,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const response = await updateUserProfile(currentUsername, updatePayload);
 
                         if (response.ok) {
-                            // ****** CAMBIO AQUÍ: Usamos fieldLabel ******
+                            
                             showToast(`El campo '${fieldLabel}' se ha actualizado correctamente.`, 'success', 'Actualización Exitosa');
                             console.log(`Campo '${fieldNameForDto}' actualizado correctamente.`);
                             
@@ -141,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             const errorData = await response.json().catch(() => ({ message: response.statusText || 'Error desconocido del servidor.' }));
                             showError(errorMsgDiv, errorData.message || `Error al actualizar ${fieldLabel}.`);
                             inputField.classList.add('is-invalid');
-                            // ****** CAMBIO AQUÍ: Usamos fieldLabel ******
+                           
                             showToast(`Error: ${errorData.message || `No se pudo actualizar el campo '${fieldLabel}'.`}`, 'danger', 'Fallo al Guardar');
                         }
                     } catch (error) {

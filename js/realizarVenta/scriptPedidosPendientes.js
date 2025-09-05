@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- URLs Base ---
-    const BASE_URL = "http://localhost:8080";
+    const BASE_URL = window.API_BASE_URL;
+
     const API_PEDIDOS_PENDIENTES_URL = `${BASE_URL}/distribuidora/pedidoPendiente`;
 
     // --- Referencias al MODAL DE CONFIRMACIÓN DE FALTANTE ---

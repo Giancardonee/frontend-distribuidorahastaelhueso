@@ -11,7 +11,8 @@ document.addEventListener('DOMContentLoaded', event => {
     let productosDataTableInc; // Instancia de Simple DataTable para esta tabla
 
     // URL base de tu API
-    const API_BASE_URL = 'http://localhost:8080/distribuidora/productos';
+    const API_BASE_URL = `${window.API_BASE_URL}/productos`;
+
 
     // Función para obtener el token JWT del localStorage
     function getJwtToken() {
@@ -27,6 +28,16 @@ document.addEventListener('DOMContentLoaded', event => {
             return false;
         }
         return true;
+    }
+
+
+    // Función para formatear números como moneda con formato de miles (por ejemplo, $10.000,50)
+    function formatCurrency(value) {
+        if (value === undefined || value === null) {
+            return 'N/A';
+        }
+        // Utiliza el formato de moneda para Argentina (es-AR)
+        return `$${Number(value).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
 
     // Función para cargar los productos y renderizar la tabla
@@ -80,8 +91,9 @@ document.addEventListener('DOMContentLoaded', event => {
                         <td>${producto.nombre || ''}</td>
                         <td>${producto.peso !== undefined && producto.peso !== null ? producto.peso.toFixed(2) : 'N/A'}</td>
                         <td>${producto.stock !== undefined && producto.stock !== null ? producto.stock : 'N/A'}</td>
-                        <td>$${producto.precioMinorista !== undefined && producto.precioMinorista !== null ? producto.precioMinorista.toFixed(2) : 'N/A'}</td>
-                        <td>$${producto.precioMayorista !== undefined && producto.precioMayorista !== null ? producto.precioMayorista.toFixed(2) : 'N/A'}</td>
+                        <td>${formatCurrency(producto.precioCosto)}</td>
+                        <td>${formatCurrency(producto.precioMinorista)}</td>
+                        <td>${formatCurrency(producto.precioMayorista)}</td>
                     </tr>
                 `;
                 tableBody.insertAdjacentHTML('beforeend', row);
@@ -99,6 +111,17 @@ document.addEventListener('DOMContentLoaded', event => {
                     prev: "Anterior"
                 },
                 perPageSelect: [5, 10, 15, 20, 25, ["Todas", -1]],
+                                columns: [
+                    { select: 0, sortable: false }, // Checkbox
+                    { select: 1, sortable: true },  // Nro Producto
+                    { select: 2, sortable: true },  // Marca
+                    { select: 3, sortable: true },  // Nombre
+                    { select: 4, sortable: true },  // Peso
+                    { select: 5, sortable: true },  // Stock
+                    { select: 6, sortable: false }, // Precio Costo - Deshabilitado el ordenamiento
+                    { select: 7, sortable: false }, // Precio Minorista - Deshabilitado el ordenamiento
+                    { select: 8, sortable: false }  // Precio Mayorista - Deshabilitado el ordenamiento
+                ]
             });
 
             // Re-asignar eventos a los checkboxes después de recargar la tabla
@@ -241,12 +264,16 @@ document.addEventListener('DOMContentLoaded', event => {
         if (tipoAjuste === 'porcentaje') {
             valorAjuste /= 100;
         }
+        // Mensaje para el modal de confirmación
+            const mensajeConfirmacion = `¿Estás seguro de aplicar un ajuste de ${tipoAjuste === 'monto' ? '$' : ''}${valorIncrementoInput.value}${tipoAjuste === 'porcentaje' ? '%' : ''} al precio ${tipoPrecio} para los ${productosSeleccionadosIds.length} productos seleccionados?`;
 
-        // Mensaje de confirmación usando confirm (no toast aquí ya que es una pregunta)
-        const confirmacion = confirm(`¿Estás seguro de aplicar un ajuste de ${tipoAjuste === 'monto' ? '$' : ''}${valorIncrementoInput.value}${tipoAjuste === 'porcentaje' ? '%' : ''} al precio ${tipoPrecio} para los ${productosSeleccionadosIds.length} productos seleccionados?`);
-        if (!confirmacion) {
-            return; // El usuario canceló la operación
-        }
+            // Usar await para esperar la respuesta del modal de Bootstrap
+            const confirmacion = await showConfirmationDialog(mensajeConfirmacion, 'Confirmar Ajuste', 'warning');
+
+            if (!confirmacion) {
+                return; // El usuario canceló la operación
+            }
+
 
         // Deshabilitar el botón para evitar envíos múltiples
         btnAplicarIncremento.disabled = true;

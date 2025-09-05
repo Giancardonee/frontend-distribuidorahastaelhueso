@@ -1,4 +1,6 @@
-const API_URL = 'http://localhost:8080/distribuidora/marcas'; 
+const API_URL = `${window.API_BASE_URL}/marcas`;
+
+
 let marcasDataTable; // Variable global para la instancia de Simple DataTables
 
 document.addEventListener('DOMContentLoaded', async event => {

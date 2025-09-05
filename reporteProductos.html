@@ -9,6 +9,7 @@
         <title>Reportes de Productos</title>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="css/styles.css" rel="stylesheet" />
+        <script src="js/config.development.js"></script>
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
@@ -27,7 +28,8 @@
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="configuracionUsuario.html">Configuracion</a></li>
                         <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" href="#!">Cerrar sesion</a></li>
+                        <li><a class="dropdown-item" id="logoutButton" href="#!">Cerrar sesión</a></li>
+
                     </ul>
                 </li>
             </ul>
@@ -133,11 +135,11 @@
                 <main>
                     <div class="container-fluid px-4">
                         <h1 class="mt-4" id="reportPageTitle">Reportes de Productos</h1>
-                    <ol class="breadcrumb mb-4">
-                        <li class="breadcrumb-item"><a href="index.html">Menú Principal</a></li>
-                        <li class="breadcrumb-item active">Reportes</li>
-                        <li class="breadcrumb-item active">Reportes de Productos</li>
-                    </ol>
+                        <ol class="breadcrumb mb-4" id="reportBreadcrumb">
+                            <li class="breadcrumb-item"><a href="index.html">Menú Principal</a></li>
+                            <li class="breadcrumb-item active">Reportes</li>
+                            <li class="breadcrumb-item active">Reportes de Productos</li>
+                        </ol>
                         
                         <div class="card mb-4">
                             <div class="card-header d-flex justify-content-between align-items-center">
@@ -183,6 +185,8 @@
                 </footer>
             </div>
         </div>
+
+        <script src="js/logout.js" defer></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="js/scripts.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>

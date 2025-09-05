@@ -31,8 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Definimos la URL de tu endpoint de login en el backend
-            const apiUrl = 'http://localhost:8080/distribuidora/auth/login';
-
+            const apiUrl = `${window.API_BASE_URL}/auth/login`;
             try {
                 // Realizamos la solicitud POST a la API
                 const response = await fetch(apiUrl, {

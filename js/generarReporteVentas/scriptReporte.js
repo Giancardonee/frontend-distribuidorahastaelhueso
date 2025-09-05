@@ -1,5 +1,6 @@
 // --- API Configuration ---
-const API_BASE_URL = 'http://localhost:8080/distribuidora';
+const API_BASE_URL = window.API_BASE_URL;
+
 const SALES_ENDPOINT = `${API_BASE_URL}/ventas`;
 const DETAIL_SALES_ENDPOINT = `${API_BASE_URL}/detalle_ventas/venta`;
 const PRODUCTS_ENDPOINT = `${API_BASE_URL}/productos`;
@@ -122,7 +123,6 @@ function populateYearSelector(salesData) {
 
     const years = new Set();
     salesData.forEach(sale => {
-        // CORRECCIÓN: Usar la fecha UTC para evitar problemas de zona horaria
         const saleDate = new Date(sale.fecha + 'T00:00:00');
         years.add(saleDate.getFullYear());
     });
@@ -150,7 +150,6 @@ function processSalesForChart(salesData, year, filter) {
     const salesByMonth = new Array(12).fill(null).map(() => ({ total: 0, sales: [] }));
 
     salesData.forEach(venta => {
-        // CORRECCIÓN: Usar la fecha UTC para evitar problemas de zona horaria
         const saleDate = new Date(venta.fecha + 'T00:00:00');
         const saleYear = saleDate.getFullYear();
         const saleMonth = saleDate.getMonth();
@@ -337,7 +336,6 @@ async function openSalesDetailModal(monthName, totalSales, year, filter, salesDa
             const saleItem = document.createElement('li');
             saleItem.classList.add('mb-3', 'p-2', 'border', 'rounded', 'bg-light');
             saleItem.innerHTML = `<strong>Venta #${sale.idVenta}</strong> - Cliente: ${sale.cliente ? sale.cliente.nombre + ' ' + sale.cliente.apellido : 'N/A'} - Total: $${(sale.total || 0).toLocaleString()}<br>`;
-            // CORRECCIÓN: Mostrar la fecha del backend directamente para evitar errores de zona horaria
             saleItem.innerHTML += `Fecha: ${sale.fecha}<br>`;
 
             if (sale.detalles && sale.detalles.length > 0) {
@@ -583,8 +581,7 @@ window.addEventListener('DOMContentLoaded', async event => {
     updateChart();
 
     document.getElementById('yearSelector').addEventListener('change', updateChart);
-    
-    // Advanced Filter Modal Events
+
     openAdvancedFilterModalBtn.addEventListener('click', openAdvancedFilterModal);
     closeAdvancedFilterModalBtn.addEventListener('click', closeAdvancedFilterModal);
     cancelFilterBtn.addEventListener('click', cancelFilters);

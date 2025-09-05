@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Obtenemos referencias a los elementos del DOM
     const salesTableBody = document.getElementById('salesTableBody');
+    const salesTable = document.getElementById('datatablesVentas'); // Referencia a la tabla completa
+    const loadingSpinner = document.getElementById('loadingSpinner'); // Referencia al spinner
     const modalVerDetalle = new bootstrap.Modal(document.getElementById('modalVerDetalle'));
     const detalleVentaId = document.getElementById('detalleVentaId');
     const detalleVentaFecha = document.getElementById('detalleVentaFecha');
@@ -17,36 +19,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnDescargarComprobanteGestion = document.getElementById('btnDescargarComprobanteGestion');
     let currentSaleIdGestion = null; // Variable para almacenar el ID de la venta actual para la descarga
 
+    // Referencia al nuevo botón para ver la última venta
+    const btnVerUltimaVenta = document.getElementById('btnVerUltimaVenta');
+
     // Función auxiliar para obtener el token del localStorage
     function getAuthToken() {
         return localStorage.getItem('jwtToken');
     }
 
-// Función para formatear la fecha a DD-MM-YYYY
-const formatDate = (dateString) => {
-    // Si dateString es "YYYY-MM-DD", podemos parsearlo manualmente o usar un constructor específico
-    // Una forma robusta es dividir la cadena y crear el objeto Date directamente con los componentes
-    const parts = dateString.split('-'); // ["YYYY", "MM", "DD"]
-    // new Date(year, monthIndex, day)
-    // monthIndex es 0-basado, por eso restamos 1 a parts[1]
-    const date = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+    // Función para formatear la fecha a DD-MM-YYYY
+    const formatDate = (dateString) => {
+        const parts = dateString.split('-');
+        const date = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
 
-    // Asegurarse de que la fecha es válida
-    if (isNaN(date.getTime())) return 'Fecha inválida';
+        if (isNaN(date.getTime())) return 'Fecha inválida';
 
-    // Obtener los componentes de la fecha. Como creamos el Date con componentes locales,
-    // getFullYear, getMonth, getDate funcionarán correctamente sin desplazamiento.
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
 
-    return `${day}/${month}/${year}`;
-};
-
-    // Eliminamos la función formatISODate porque ya no la necesitamos para ordenar
-    // const formatISODate = (dateString) => {
-    //     return dateString;
-    // };
+        return `${day}/${month}/${year}`;
+    };
 
     // Función para formatear precios a moneda
     const formatCurrency = (amount) => {
@@ -109,7 +102,7 @@ const formatDate = (dateString) => {
                 showToast("Token de autenticación no encontrado. Por favor, inicia sesión.", 'danger');
                 return;
             }
-            const response = await fetch(`http://localhost:8080/distribuidora/ventas/${idVenta}`, {
+            const response = await fetch(`${window.API_BASE_URL}/ventas/${idVenta}`, {
                 method: 'GET',
                 headers: headers
             });
@@ -159,7 +152,7 @@ const formatDate = (dateString) => {
                 showToast("Token de autenticación no encontrado. Por favor, inicia sesión para ver las ventas.", 'danger');
                 return;
             }
-            const response = await fetch('http://localhost:8080/distribuidora/ventas', {
+            const response = await fetch(`${window.API_BASE_URL}/ventas`, {
                 method: 'GET',
                 headers: headers
             });
@@ -179,7 +172,6 @@ const formatDate = (dateString) => {
                 row.insertCell().textContent = sale.idVenta;
 
                 const fechaCell = row.insertCell();
-                // Ya no necesitamos data-order para deshabilitar el ordenamiento
                 fechaCell.textContent = formatDate(sale.fecha);
 
                 row.insertCell().textContent = `${sale.cliente.nombre} ${sale.cliente.apellido}`;
@@ -197,7 +189,12 @@ const formatDate = (dateString) => {
                 `;
             });
 
-            // MODIFICACIÓN CLAVE: Deshabilitar el ordenamiento para la columna de fecha (índice 1)
+            // Encontrar la última venta con el ID más alto
+            if (sales.length > 0) {
+                const lastSale = sales.reduce((prev, current) => (prev.idVenta > current.idVenta) ? prev : current);
+                btnVerUltimaVenta.dataset.lastSaleId = lastSale.idVenta;
+            }
+
             salesDataTableInstance = new simpleDatatables.DataTable("#datatablesVentas", {
                 labels: {
                     placeholder: "Buscar...",
@@ -208,13 +205,13 @@ const formatDate = (dateString) => {
                     next: "Siguiente",
                     previous: "Anterior"
                 },
-                // --- CONFIGURACIÓN PARA DESHABILITAR ORDENAMIENTO DE LA FECHA ---
                 columns: [
-                    { select: 1, sortable: false } // La columna con índice 1 (Fecha) no será ordenable
+                    { select: 1, sortable: false }
                 ]
-                // ----------------------------------------------------------------
             });
 
+            // Mostrar el toast de éxito después de cargar los datos
+            showToast('Se cargaron correctamente todas las ventas.', 'success', 'Exito');
         } catch (error) {
             console.error("Error al cargar las ventas:", error);
             showToast(`Error al cargar las ventas: ${error.message}`, 'danger');
@@ -230,6 +227,18 @@ const formatDate = (dateString) => {
         }
     });
 
+    // Listener para el botón de ver la última venta
+    if (btnVerUltimaVenta) {
+        btnVerUltimaVenta.addEventListener('click', () => {
+            const lastSaleId = btnVerUltimaVenta.dataset.lastSaleId;
+            if (lastSaleId) {
+                showSaleDetail(lastSaleId);
+            } else {
+                showToast("No se ha encontrado ninguna venta para mostrar.", 'info');
+            }
+        });
+    }
+
     // Listener para el botón de descargar comprobante
     if (btnDescargarComprobanteGestion) {
         btnDescargarComprobanteGestion.addEventListener('click', async () => {
@@ -243,7 +252,8 @@ const formatDate = (dateString) => {
                 return;
             }
             try {
-                const API_VENTAS_URL_PDF = "http://localhost:8080/distribuidora/ventas";
+                const API_VENTAS_URL_PDF = `${window.API_BASE_URL}/ventas`;
+
                 const response = await fetch(`${API_VENTAS_URL_PDF}/${currentSaleIdGestion}/comprobante`, {
                     method: 'GET',
                     headers: {

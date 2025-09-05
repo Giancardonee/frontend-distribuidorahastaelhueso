@@ -1,4 +1,4 @@
-// js/scripts.js
+// js/generic/showtoast.js
 
 /**
  * Muestra un toast de Bootstrap 5.
