@@ -3,12 +3,18 @@ const baseUrl = window.API_BASE_URL;
 
 const jwtToken = localStorage.getItem('jwtToken');
 let enviosData = []; // Variable global para almacenar los envíos cargados
+let dataTableEnvios; // Variable global para la instancia de la tabla
 
 document.addEventListener('DOMContentLoaded', () => {
     if (!jwtToken) {
         console.error('No se encontró el token JWT. Redirigiendo al login.');
         window.location.href = 'login.html';
         return;
+    }
+
+    const datatablesSimple = document.getElementById('datatablesSimple');
+    if (datatablesSimple) {
+        dataTableEnvios = new simpleDatatables.DataTable(datatablesSimple);
     }
 
     window.cerrarSesion = function() {
@@ -52,8 +58,6 @@ function getBotonProgramar(envio) {
 
 // Función principal para cargar la tabla de envíos desde el backend y guardar en memoria
 window.cargarEnvios = async function() {
-    document.getElementById('filtroClienteQuery').value = ''; // <--- LÍNEA AÑADIDA
-    document.getElementById('filtroEstado').value = '';
     const tbody = document.querySelector('#dataTableEnvios tbody');
     tbody.innerHTML = '';
     
@@ -219,6 +223,25 @@ window.abrirModalProgramar = function(idEnvio) {
         modalProgramarEnvioLabel.textContent = 'Editar Envío';
     }
 
+    // Lógica para habilitar/deshabilitar el campo de fecha al abrir el modal
+    const fechaInput = document.getElementById('fechaEntregaProgramar');
+    if (envio.estado === 'SIN_FECHA') {
+        fechaInput.disabled = true;
+    } else {
+        fechaInput.disabled = false;
+    }
+    
+    // Añadimos un listener al cambio de estado dentro del modal
+    const estadoSelect = document.getElementById('estadoEnvioEditar');
+    estadoSelect.onchange = function() {
+        if (estadoSelect.value === 'SIN_FECHA') {
+            fechaInput.disabled = true;
+            fechaInput.value = ''; // Borra el valor de la fecha
+        } else {
+            fechaInput.disabled = false;
+        }
+    };
+
     document.getElementById('idEnvioEditar').value = envio.idEnvio;
     document.getElementById('idVentaProgramar').value = envio.idVenta;
     document.getElementById('estadoEnvioEditar').value = envio.estado;
@@ -284,10 +307,38 @@ window.guardarProgramacion = async function() {
     const estado = document.getElementById('estadoEnvioEditar').value;
     const fechaEntrega = document.getElementById('fechaEntregaProgramar').value || null;
     const observaciones = document.getElementById('observacionesEditar').value.trim() || null;
+    const today = new Date().toISOString().split('T')[0]; // Formato YYYY-MM-DD
+
+    // 1. Validaciones para envíos PENDIENTES
+    if (estado === 'PENDIENTE') {
+        if (!fechaEntrega) {
+            showToast('Un envío pendiente debe tener una fecha de entrega asignada.', 'warning', 'Advertencia');
+            return;
+        }
+        if (fechaEntrega < today) {
+            showToast('La fecha de entrega para un envío pendiente no puede ser anterior a la fecha actual.', 'warning', 'Advertencia');
+            return;
+        }
+    }
     
-    if (estado === 'ENTREGADO' && !fechaEntrega) {
-        showToast('Para marcar un envío como Entregado, debe seleccionar una fecha de entrega.', 'warning', 'Advertencia');
-        return;
+    // 2. Validaciones para envíos SIN_FECHA
+    if (estado === 'SIN_FECHA') {
+        if (fechaEntrega) {
+            showToast('No se puede asignar una fecha a un envío con estado "Sin Fecha".', 'warning', 'Advertencia');
+            return;
+        }
+    }
+
+    // 3. Validaciones para envíos ENTREGADOS
+    if (estado === 'ENTREGADO') {
+        if (!fechaEntrega) {
+             showToast('Un envío entregado debe tener una fecha de entrega.', 'warning', 'Advertencia');
+            return;
+        }
+        if (fechaEntrega > today) {
+            showToast('La fecha de entrega para un envío entregado no puede ser posterior a la fecha actual.', 'warning', 'Advertencia');
+            return;
+        }
     }
 
     const url = `${baseUrl}/envios/${idEnvio}`;
