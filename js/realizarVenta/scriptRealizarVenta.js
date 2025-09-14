@@ -22,7 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const productosVentaContainer = document.getElementById('productosVentaContainer');
     const btnAgregarProducto = document.getElementById('btnAgregarProducto');
     const ventaTotalVentaSpan = document.getElementById('ventaTotalVenta');
-    // REMOVIDO: const inputDescuento = document.getElementById('descuento');
 
 
     // Referencias para la selección de Cliente en el formulario de Venta
