@@ -3,7 +3,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const BASE_URL = window.API_BASE_URL;
 
-    const API_VENTAS_URL = `${BASE_URL}/distribuidora/ventas`;
+    const API_VENTAS_URL = `${BASE_URL}/ventas`;
 
     // Referencias a elementos del DOM del modal de detalle de venta
     const modalDetalleVentaElement = document.getElementById('modalDetalleVenta');
