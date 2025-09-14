@@ -548,46 +548,46 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // Modifica la función searchProducts para enviar dos parámetros
-    async function searchProducts(nombreProducto, idMarca) {
-        const token = getAuthToken();
-        if (!token) {
-            showToast("Token de autenticación no encontrado. Por favor, inicia sesión.", 'error');
-            return [];
-        }
-        try {
-            let url = `${API_PRODUCTOS_URL}/buscarCombinado?`;
-
-            const params = new URLSearchParams();
-            if (nombreProducto && nombreProducto.trim() !== '') {
-                params.append('nombreProducto', nombreProducto.trim());
-            }
-            if (idMarca && idMarca !== '') {
-                params.append('idMarca', idMarca);
-            }
-
-            url += params.toString();
-
-            if (params.toString() === '') {
-                productSearchResults.innerHTML = '<div class="alert alert-warning">Por favor, ingrese un nombre de producto o seleccione una marca para buscar.</div>';
-                return [];
-            }
-
-            const response = await fetch(url, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Error al buscar productos: ${errorText || response.statusText}`);
-            }
-            return await response.json();
-        } catch (error) {
-            console.error("Error fetching products:", error);
-            showToast(`Error al buscar productos: ${error.message}`, 'error');
-            return [];
-        }
+  async function searchProducts(nombreProducto, idMarca) {
+    const token = getAuthToken();
+    if (!token) {
+        showToast("Token de autenticación no encontrado. Por favor, inicia sesión.", 'error');
+        return [];
     }
+    try {
+        let url = `${API_PRODUCTOS_URL}/buscarCombinado?`;
+
+        const params = new URLSearchParams();
+        if (nombreProducto && nombreProducto.trim() !== '') {
+            params.append('nombreProductoQuery', nombreProducto.trim()); // <<-- coincide con backend
+        }
+        if (idMarca && idMarca !== '') {
+            params.append('idMarcaQuery', idMarca); // <<-- coincide con backend
+        }
+
+        url += params.toString();
+
+        if (params.toString() === '') {
+            productSearchResults.innerHTML = '<div class="alert alert-warning">Por favor, ingrese un nombre de producto o seleccione una marca para buscar.</div>';
+            return [];
+        }
+
+        const response = await fetch(url, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Error al buscar productos: ${errorText || response.statusText}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching products:", error);
+        showToast(`Error al buscar productos: ${error.message}`, 'error');
+        return [];
+    }
+}
+
 
 
     // Listener para el botón de búsqueda de productos
