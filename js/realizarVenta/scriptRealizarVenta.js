@@ -5,11 +5,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const BASE_URL = window.API_BASE_URL; 
 
-    const API_VENTAS_URL = `${BASE_URL}/distribuidora/ventas`;
-    const API_CLIENTES_URL = `${BASE_URL}/distribuidora/clientes`;
-    const API_PRODUCTOS_URL = `${BASE_URL}/distribuidora/productos`;
-    const API_MARCAS_URL = `${BASE_URL}/distribuidora/marcas`;
-    const API_PERFIL_URL = `${BASE_URL}/distribuidora/auth/perfil`;
+    const API_VENTAS_URL = `${BASE_URL}/ventas`;
+    const API_CLIENTES_URL = `${BASE_URL}/clientes`;
+    const API_PRODUCTOS_URL = `${BASE_URL}/productos`;
+    const API_MARCAS_URL = `${BASE_URL}/marcas`;
+    const API_PERFIL_URL = `${BASE_URL}/auth/perfil`;
 
 
     // Para tener en cuenta si es un pedido pendiente
