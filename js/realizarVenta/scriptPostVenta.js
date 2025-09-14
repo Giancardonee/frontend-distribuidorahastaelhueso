@@ -3,8 +3,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     const BASE_URL = window.API_BASE_URL;
 
+    // Se elimina /distribuidora/ de la ruta
     const API_VENTAS_URL = `${BASE_URL}/ventas`;
 
+    
     // Referencias a elementos del DOM del modal de detalle de venta
     const modalDetalleVentaElement = document.getElementById('modalDetalleVenta');
     const detalleVentaIdSpan = document.getElementById('detalleVentaId');

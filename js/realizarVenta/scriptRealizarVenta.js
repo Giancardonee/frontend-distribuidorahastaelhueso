@@ -2,8 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- URLs Base ---
-
-    const BASE_URL = window.API_BASE_URL; 
+    const BASE_URL = window.API_BASE_URL;
 
     const API_VENTAS_URL = `${BASE_URL}/ventas`;
     const API_CLIENTES_URL = `${BASE_URL}/clientes`;
@@ -1205,7 +1204,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         try {
-            const response = await fetch(`${BASE_URL}/distribuidora/pedidoPendiente/${id}/marcar-resuelto`, {
+            const response = await fetch(`${BASE_URL}/pedidoPendiente/${id}/marcar-resuelto`, {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${token}`

@@ -2,7 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- URLs Base ---
     const BASE_URL = window.API_BASE_URL;
 
-    const API_PEDIDOS_PENDIENTES_URL = `${BASE_URL}/distribuidora/pedidoPendiente`;
+    // Se elimina /distribuidora/ de la ruta
+    const API_PEDIDOS_PENDIENTES_URL = `${BASE_URL}/pedidoPendiente`;
 
     // --- Referencias al MODAL DE CONFIRMACIÓN DE FALTANTE ---
     const modalConfirmarFaltanteElement = document.getElementById('modalConfirmarFaltante');
